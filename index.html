@@ -109,6 +109,13 @@ dialog .hd{background:var(--navy);color:#fff;padding:10px 16px;display:flex;alig
 dialog .hd b{margin-right:auto}
 dialog pre{margin:0;background:var(--code);color:var(--codeink);padding:14px;max-height:55vh;overflow:auto;font-size:12.5px}
 footer{max-width:1320px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font-size:12px}
+.guia{margin:14px 0 4px;border:1px solid #f0d58a;background:#fffaf0;border-radius:10px;padding:0 14px}
+.guia summary{cursor:pointer;font-weight:700;color:var(--navy);padding:10px 0;list-style:none}
+.guia summary::-webkit-details-marker{display:none}
+.guia summary::before{content:"▸ ";color:var(--gold)} .guia[open] summary::before{content:"▾ "}
+.guia ol{margin:0 0 8px;padding-left:22px} .guia li{margin:3px 0}
+.guia .ent{margin:4px 0 12px;font-size:13px;color:var(--ink)}
+.guia .ent code{background:#fff;border:1px solid var(--line);border-radius:4px;padding:0 4px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -147,10 +154,24 @@ footer{max-width:1320px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font
 
 <!-- MISIÓN (una vista que se llena según la misión) -->
 <section data-view="mision" hidden>
+  <div class="alert warn" id="mSinNombre" hidden style="margin:0 0 16px">
+    <b>Antes de empezar: escriba su nombre</b>Sin nombre, la persona tutora no ve su avance y no puede ayudarle.
+    <div class="row" style="margin-top:8px"><input type="text" id="nombre2" placeholder="Nombre y primer apellido" maxlength="60" autocomplete="name"><button class="btn gold" id="guardarNombre2" type="button">Guardar</button><span class="small" id="nombreEstado2"></span></div>
+  </div>
   <div class="hero">
     <p class="eyebrow" id="mEyebrow"></p>
     <h2 id="mTitulo"></h2>
     <div id="mEnunciado"></div>
+    <details class="guia" id="mGuia" open>
+      <summary>¿Qué hago en esta pantalla? (4 pasos)</summary>
+      <ol>
+        <li><b>Lea el enunciado de arriba</b>: dice qué debe hacer el programa.</li>
+        <li><b>Complete el código del editor</b> (cuadro oscuro, abajo a la izquierda): escriba lo que falta donde dice <code># TODO</code>. La plantilla, tal como viene, todavía no hace lo que se pide.</li>
+        <li><b>Presione ▶ Ejecutar</b> para probarlo. El programa toma los datos del cuadro <b>Entradas</b> (a la derecha), uno por línea, cada vez que llama a <code>input()</code>. El resultado sale en <b>Salida del programa</b>.</li>
+        <li><b>Presione ✓ Verificar</b> cuando crea que ya cumple. Abajo a la derecha verá qué pruebas pasan (✓) y, si algo falla, <b>qué revisar</b>. Corrija y vuelva a verificar hasta que diga «¡Misión superada!».</li>
+      </ol>
+      <p class="ent" id="mEntradas"></p>
+    </details>
     <nav class="steps" id="mNav"></nav>
   </div>
   <div class="work">
@@ -338,10 +359,14 @@ function pintarInicio(){
 }
 $("#guardarNombre").addEventListener("click", guardarNombre);
 $("#nombre").addEventListener("keydown", e => { if(e.key === "Enter") guardarNombre(); });
-function guardarNombre(){
-  const v = $("#nombre").value.trim().replace(/\s+/g, " ");
-  if(v.length < 3){ $("#nombreEstado").textContent = "Escriba su nombre y primer apellido."; return; }
-  NOMBRE = v; store.set("nombre", v);
+$("#guardarNombre2").addEventListener("click", () => guardarNombre("2"));
+$("#nombre2").addEventListener("keydown", e => { if(e.key === "Enter") guardarNombre("2"); });
+function guardarNombre(suf){
+  suf = (typeof suf === "string") ? suf : "";
+  const v = $("#nombre" + suf).value.trim().replace(/\s+/g, " ");
+  if(v.length < 3){ $("#nombreEstado" + suf).textContent = "Escriba su nombre y primer apellido."; return; }
+  NOMBRE = v; store.set("nombre", v); $("#nombre").value = v;
+  if(suf){ $("#mSinNombre").hidden = true; if(MISION) enviar("abrir", { mision: MISION.id }); }
   $("#nombreEstado").textContent = endpoint() ? "Listo. Su avance le llegará a la persona tutora." : "Listo. (Este enlace no está conectado con la persona tutora: su avance queda solo en su navegador.)";
   pintarQuien(); enviar("ingreso", {});
 }
@@ -388,11 +413,26 @@ code.addEventListener("keydown", e => {
   }
 });
 
+const ENTRADAS_EXPLICA = {
+  menu: "Las entradas de ejemplo simulan a alguien usando el menú: <code>1</code> Registrar → <code>Ana Solís</code> paciente → <code>Pediatría</code> especialidad → <code>2</code> Listar → <code>7</code> opción inválida → <code>3</code> Salir.",
+  fiebre: "Las entradas de ejemplo: <code>3</code> pacientes y sus temperaturas <code>36.5</code>, <code>38.0</code> y <code>39.2</code>. Dos de ellas son fiebre, así que el programa debe mostrar 2.",
+  buscar: "La entrada de ejemplo es el nombre a buscar, escrito a propósito con espacios y minúsculas: <code>&nbsp;&nbsp;sara vega&nbsp;</code>. Aun así debe encontrarla en la posición 2.",
+  validar: "Las entradas de ejemplo: <code>tres</code> (no es número), <code>0</code> y <code>7</code> (fuera de rango) y por fin <code>3</code> (válido). Su función debe rechazar las tres primeras y aceptar el 3.",
+  jornadas: "Esta misión no usa entradas: los datos ya están escritos dentro de <code>main()</code>. Solo complete la función y presione Ejecutar.",
+  json: "Las entradas de ejemplo: <code>1</code> Registrar → <code>Ana Solís</code> → <code>38.5</code> → <code>2</code> Listar → <code>3</code> Salir (y guardar). Para comprobar que el sistema recuerda, ejecute otra vez dejando solo <code>2</code> y <code>3</code> en Entradas: Ana debe seguir ahí.",
+  detective: "Aquí el código ya está completo, pero tiene cinco defectos. Las entradas de ejemplo registran gasa (10 unidades, mínimo 10) y sutura (2, mínimo 5), piden las alertas, buscan «sutura» y salen. Compare lo que sale con lo que debería salir."
+};
+(function(){ const g = $("#mGuia"); if(store.get("guiaCerrada", false)) g.open = false;
+  g.addEventListener("toggle", () => store.set("guiaCerrada", !g.open)); })();
+function sinCambios(){ return MISION && MISION.id !== "detective" && code.value.trim() === MISION.plantilla.trim(); }
+const AVISO_PLANTILLA = `<div class="alert warn"><b>Todavía está la plantilla sin cambios</b>Primero complete las líneas marcadas con <code># TODO</code> en el editor; luego vuelva a ejecutar o verificar.</div>`;
 function abrirMision(m){
   MISION = m; vista("mision");
   $("#mEyebrow").textContent = "Misión " + m.n + " · " + m.nivel;
   $("#mTitulo").textContent = m.titulo;
   $("#mEnunciado").innerHTML = m.enunciado;
+  $("#mEntradas").innerHTML = ENTRADAS_EXPLICA[m.id] || "";
+  $("#mSinNombre").hidden = !!NOMBRE;
   $("#mArchivo").textContent = "mision" + m.n + "_" + m.id + ".py";
   const i = MISIONES.indexOf(m);
   $("#mNav").innerHTML = `<a class="btn ghost" href="#inicio">← Todas las misiones</a>` +
@@ -445,7 +485,8 @@ async function ejecutar(){
       msg += `<div class="alert bad"><b>${esc(x.error.titulo)}</b>${esc(x.error.pista)}${x.error.detalle && x.error.pista ? `<div class="small mono">${esc(x.error.tipo)}: ${esc(x.error.detalle)}</div>` : ""}</div>`;
     }
     if(x.agotadas) msg += `<div class="alert warn"><b>El programa pidió más datos de los que hay en «Entradas»</b>Agregue más líneas en Entradas, o revise si su programa sigue pidiendo datos cuando ya debía terminar (por ejemplo, la opción de salir).</div>`;
-    if(!x.error && !x.agotadas && x.sobrantes > 0) msg += `<div class="alert warn"><b>Sobraron ${x.sobrantes} entrada(s)</b>El programa terminó antes de usarlas todas. ¿Terminó antes de tiempo?</div>`;
+    if(sinCambios()) msg += AVISO_PLANTILLA;
+    else if(!x.error && !x.agotadas && x.sobrantes > 0) msg += `<div class="alert warn"><b>Sobraron ${x.sobrantes} entrada(s)</b>El programa terminó antes de usarlas todas. ¿Terminó antes de tiempo?</div>`;
     $("#files").textContent = (x.archivos && x.archivos.length) ? "Archivos guardados: " + x.archivos.join(", ") : "";
     if(x.archivos && x.archivos.length) $("#files").innerHTML += ` · <a href="#" id="borrarArch">Borrar archivos</a>`;
     enviar("ejecutar", { mision: MISION.id, ok: !x.error, error: x.error ? x.error.titulo : "" });
@@ -475,6 +516,7 @@ async function verificar(){
   const pr = res.principal || {};
   if(pr.error && pr.error.linea){ lineaError = pr.error.linea; pintarGutter(); }
   pintarPruebas(res); pintarChips();
+  if(sinCambios() && !res.ok) $("#resumen").innerHTML = AVISO_PLANTILLA + $("#resumen").innerHTML;
   enviar("verificar", { mision: MISION.id, ok: !!res.ok, pasadas: res.pasadas, total: res.total, intento: p.intentos,
     prueba: pr.nombre || "", error: (pr.detalle || "").slice(0, 300), pista: (pr.pista || "").slice(0, 300), codigo: code.value.slice(0, 6000) });
 }
