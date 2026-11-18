@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio de Algoritmos en Salud · 03564</title>
+<meta name="description" content="Práctica interactiva de Python para la Tutoría 4 de 03564 Lógica y Algoritmos para Sistemas de Información en Salud (UNED).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#003580; --navy2:#0b2a5b; --gold:#F5A800; --ink:#1d2433; --mute:#5d6678; --line:#d9dee8;
+  --bg:#f4f6fa; --card:#ffffff; --ok:#1e7b4f; --okbg:#e8f5ee; --bad:#a33a3a; --badbg:#fbeeee; --warnbg:#fff6df;
+  --code:#0f1b33; --codeink:#e6ecf8; --gut:#7d8aa8;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+code,pre,textarea,.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+a{color:var(--navy)}
+header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+.top .bar{max-width:1320px;margin:0 auto;padding:10px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.2;margin-right:auto}
+.brand b{font-size:16px;letter-spacing:.2px}
+.brand span{font-size:12px;color:#c9d6f0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:3px 9px;color:#fff;text-decoration:none;white-space:nowrap}
+.chip.ok{background:var(--gold);border-color:var(--gold);color:#111;font-weight:600}
+.chip.try{border-color:#f6c76a}
+.who{font-size:13px;display:flex;align-items:center;gap:8px}
+.who .dot{width:9px;height:9px;border-radius:50%;background:#8a95ab;display:inline-block}
+.who .dot.on{background:#4fd18b}
+main{max-width:1320px;margin:0 auto;padding:18px 16px 60px}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:16px}
+.eyebrow{color:#9b6c00;font-weight:700;font-size:12px;letter-spacing:.8px;text-transform:uppercase;margin:0 0 4px}
+h1,h2,h3{color:var(--navy);margin:0 0 8px;line-height:1.25}
+h1{font-size:28px} h2{font-size:22px} h3{font-size:16px}
+.lead{color:var(--mute);margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.mcard{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);position:relative}
+.mcard:hover{border-color:var(--navy)}
+.mcard .lvl{font-size:11px;font-weight:700;color:#9b6c00;letter-spacing:.6px}
+.mcard h3{margin:4px 0 6px}
+.mcard p{margin:0;color:var(--mute);font-size:14px}
+.mcard .st{position:absolute;top:12px;right:14px;font-size:12px;font-weight:600}
+.st.ok{color:var(--ok)} .st.try{color:#9b6c00}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input[type=text],input[type=password],input[type=url]{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:8px;min-width:260px;background:#fff}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 14px;cursor:pointer;background:var(--navy);color:#fff}
+.btn:hover{filter:brightness(1.1)}
+.btn.gold{background:var(--gold);color:#111}
+.btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.small{font-size:13px;color:var(--mute)}
+.tip{background:var(--warnbg);border-left:4px solid var(--gold);padding:8px 12px;border-radius:6px}
+.reqs{list-style:none;padding:0}
+.reqs li{display:flex;gap:10px;margin:4px 0}
+.reqs code{background:#eef2fa;color:var(--navy);padding:1px 6px;border-radius:5px;font-weight:600;height:fit-content}
+/* misión */
+.work{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;margin-top:14px}
+@media (max-width:980px){.work{grid-template-columns:1fr}}
+.editor{background:var(--code);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:460px}
+.ed-bar{display:flex;gap:8px;align-items:center;padding:8px 10px;background:#0a1428;color:#b9c6e3;font-size:12px;flex-wrap:wrap}
+.ed-bar .fn{margin-right:auto;font-family:"IBM Plex Mono",monospace}
+.ed-body{display:flex;flex:1;min-height:380px;position:relative}
+.gutter{padding:12px 8px 12px 10px;color:var(--gut);text-align:right;user-select:none;font:13px/1.6 "IBM Plex Mono",monospace;white-space:pre;overflow:hidden;min-width:44px;background:#0c1730}
+.gutter .err{color:#fff;background:var(--bad);border-radius:3px;padding:0 3px}
+textarea.code{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--codeink);font:13px/1.6 "IBM Plex Mono",monospace;padding:12px 12px;white-space:pre;overflow:auto;tab-size:4}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.box h4{margin:0;padding:9px 14px;font-size:13px;letter-spacing:.4px;color:var(--navy);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.box h4 .sp{margin-left:auto}
+.box .in{padding:10px 14px}
+textarea.stdin{width:100%;min-height:86px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:13px/1.5 "IBM Plex Mono",monospace;resize:vertical}
+pre.out{margin:0;background:#f7f9fc;padding:10px 14px;min-height:120px;max-height:320px;overflow:auto;font-size:13px;white-space:pre-wrap;word-break:break-word}
+.alert{border-radius:8px;padding:10px 12px;margin:8px 0}
+.alert.bad{background:var(--badbg);border-left:4px solid var(--bad)}
+.alert.ok{background:var(--okbg);border-left:4px solid var(--ok)}
+.alert.warn{background:var(--warnbg);border-left:4px solid var(--gold)}
+.alert b{display:block;margin-bottom:2px}
+.tests{list-style:none;margin:0;padding:0}
+.tests li{display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.tests li:last-child{border-bottom:0}
+.tests .i{width:20px;text-align:center;font-weight:700}
+.tests .y{color:var(--ok)} .tests .n{color:var(--bad)}
+.meter{height:8px;background:#e7ebf3;border-radius:99px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:var(--gold);width:0}
+.loading{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}
+.spin{width:14px;height:14px;border:2px solid #c5cee0;border-top-color:var(--navy);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.files{font-size:12px;color:var(--mute)}
+nav.steps{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 0}
+/* tutor */
+table.dash{width:100%;border-collapse:collapse;background:#fff;font-size:13px}
+table.dash th,table.dash td{border:1px solid var(--line);padding:6px 8px;text-align:center;vertical-align:middle}
+table.dash th{background:var(--navy);color:#fff;font-weight:600;position:sticky;top:0}
+table.dash td.n{text-align:left;font-weight:600}
+td.c-ok{background:var(--okbg);color:var(--ok);font-weight:700;cursor:pointer}
+td.c-bad{background:var(--badbg);color:var(--bad);font-weight:700;cursor:pointer}
+td.c-run{background:#f1f4fa;color:var(--mute);cursor:pointer}
+td.last{text-align:left;max-width:320px;font-size:12px;color:var(--mute)}
+.pill{display:inline-block;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:700}
+.pill.live{background:#e1f6ea;color:var(--ok)} .pill.idle{background:#eef1f6;color:var(--mute)} .pill.off{background:var(--badbg);color:var(--bad)}
+dialog{border:0;border-radius:14px;max-width:900px;width:92vw;padding:0}
+dialog::backdrop{background:rgba(10,20,40,.5)}
+dialog .hd{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center}
+dialog .hd b{margin-right:auto}
+dialog pre{margin:0;background:var(--code);color:var(--codeink);padding:14px;max-height:55vh;overflow:auto;font-size:12.5px}
+footer{max-width:1320px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font-size:12px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+  <div class="brand"><b>Laboratorio de Algoritmos en Salud</b><span>03564 Lógica y Algoritmos para SIS · Tutoría 4 · UNED</span></div>
+  <div class="chips" id="chips"></div>
+  <div class="who"><span class="dot" id="dot" title="Conexión con la persona tutora"></span><span id="whoName">Sin nombre</span></div>
+</div></header>
+
+<main>
+<!-- INICIO -->
+<section data-view="inicio">
+  <div class="hero">
+    <p class="eyebrow">Tutoría 4 · Unidad 4 · Algoritmos</p>
+    <h1>Siete misiones antes del Taller 4</h1>
+    <p class="lead">Aquí escribe Python y lo ejecuta en su propio navegador, sin instalar nada. Cada misión tiene pruebas automáticas: al presionar <b>Verificar</b>, el laboratorio le dice qué prueba falla, por qué y qué revisar. Equivocarse aquí es gratis: para eso es.</p>
+  </div>
+  <div class="panel" style="margin-bottom:16px">
+    <h3>1 · Escriba su nombre</h3>
+    <p class="small" style="margin-top:0">Nombre y primer apellido, como aparece en el aula. Su avance (pruebas que pasa, errores y el código que verifica) le llega a la persona tutora para poder ayudarle durante la sesión. No cuenta para la nota.</p>
+    <div class="row"><input type="text" id="nombre" placeholder="Por ejemplo: María Solís" maxlength="60" autocomplete="name"><button class="btn gold" id="guardarNombre" type="button">Guardar</button><span class="small" id="nombreEstado"></span></div>
+  </div>
+  <h3 style="margin:6px 0 10px">2 · Elija una misión</h3>
+  <div class="grid" id="cards"></div>
+  <div class="panel" style="margin-top:16px">
+    <h3>Cómo se trabaja</h3>
+    <ul style="margin:0;padding-left:20px">
+      <li><b>Entradas</b>: escriba un dato por línea; el programa los toma en orden cada vez que llama a <code>input()</code>.</li>
+      <li><b>Ejecutar</b> (Ctrl + Enter) corre su programa con esas entradas. <b>Verificar</b> (Ctrl + Shift + Enter) corre las pruebas de la misión.</li>
+      <li>Su código se guarda solo en este navegador. «Plantilla» lo devuelve al punto de partida.</li>
+      <li>Cuando una misión le salga, copie el programa a Visual Studio Code y ejecútelo allí también: es el mismo Python.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- MISIÓN (una vista que se llena según la misión) -->
+<section data-view="mision" hidden>
+  <div class="hero">
+    <p class="eyebrow" id="mEyebrow"></p>
+    <h2 id="mTitulo"></h2>
+    <div id="mEnunciado"></div>
+    <nav class="steps" id="mNav"></nav>
+  </div>
+  <div class="work">
+    <div class="editor">
+      <div class="ed-bar"><span class="fn" id="mArchivo">su_programa.py</span>
+        <button class="btn ghost" type="button" id="bPlantilla" style="color:#cfe0ff;border-color:#2c3f66">Plantilla</button>
+        <button class="btn" type="button" id="bEjecutar">▶ Ejecutar</button>
+        <button class="btn gold" type="button" id="bVerificar">✓ Verificar</button>
+      </div>
+      <div class="ed-body"><div class="gutter" id="gutter">1</div><textarea class="code" id="code" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"></textarea></div>
+    </div>
+    <div class="side">
+      <div class="box"><h4>Entradas <span class="small sp">una por línea</span></h4><div class="in"><textarea class="stdin" id="stdin"></textarea></div></div>
+      <div class="box"><h4>Salida del programa <span class="sp files" id="files"></span></h4><div id="outMsg" style="padding:0 14px"></div><pre class="out" id="out">Presione «Ejecutar» para correr su programa.</pre></div>
+      <div class="box"><h4>Pruebas de la misión <span class="sp small" id="score"></span></h4><div class="in"><div id="resumen" class="small">Presione «Verificar» cuando crea que su programa cumple.</div><div class="meter"><i id="meter"></i></div><ul class="tests" id="tests"></ul></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TUTOR -->
+<section data-view="tutor" hidden>
+  <div class="hero">
+    <p class="eyebrow">Solo para la persona tutora</p>
+    <h2>Tablero de la sesión</h2>
+    <p class="lead">Muestra, por estudiante, qué misiones pasó, cuántas veces verificó y en qué prueba está fallando. Se actualiza cada 20 segundos. No comparta esta pantalla: muestra nombres y código.</p>
+  </div>
+  <div class="panel" style="margin-bottom:12px">
+    <div class="row">
+      <input type="url" id="tUrl" placeholder="URL de la aplicación web (termina en /exec)" style="flex:1">
+      <input type="password" id="tClave" placeholder="Clave" style="min-width:140px">
+      <button class="btn" type="button" id="tCargar">Cargar</button>
+      <label class="small"><input type="checkbox" id="tAuto" checked> Actualizar solo</label>
+    </div>
+    <p class="small" id="tEstado" style="margin:8px 0 0"></p>
+    <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="tEnlace">Copiar enlace para estudiantes</button><span class="small" id="tEnlaceEstado"></span></div>
+  </div>
+  <div style="overflow:auto"><table class="dash" id="tTabla"></table></div>
+  <div class="panel" style="margin-top:12px" id="tErrores" hidden><h3>Lo que más está fallando</h3><ul id="tTop" style="margin:0;padding-left:20px"></ul></div>
+</section>
+</main>
+<footer>Laboratorio de Algoritmos en Salud · Cátedra Gestión de la Información en Salud · UNED Costa Rica · Python corre en su navegador con Pyodide.</footer>
+
+<dialog id="dlg"><div class="hd"><b id="dlgT"></b><button class="btn ghost" type="button" id="dlgX" style="color:#fff;border-color:#4b6596">Cerrar</button></div><div id="dlgB"></div></dialog>
+
+<script type="application/json" id="DATA_MISIONES">[{"id": "menu", "n": 1, "nivel": "Base", "titulo": "El menú que no se detiene", "resumen": "Menú con while, opción inválida y salida con break. Es el esqueleto de los 15 ejercicios del Taller 4.", "enunciado": "<p>El EBAIS necesita un registro de citas por consola. Complete el programa para que muestre un menú que se repite hasta que la persona elija salir.<\/p>\n<ul><li><b>1<\/b> · Registrar: pide el paciente y la especialidad y los agrega a sus listas.<\/li>\n<li><b>2<\/b> · Listar: muestra cada cita en una línea, o «No hay citas registradas.» si no hay ninguna.<\/li>\n<li><b>3<\/b> · Salir: termina el programa.<\/li>\n<li>Cualquier otra opción: «Opción inválida».<\/li><\/ul>\n<p class=\"tip\">La opción se lee <b>dentro<\/b> del while. Si la lee antes, el menú repite para siempre la misma opción.<\/p>", "entradas_ejemplo": "1\nAna Solís\nPediatría\n2\n7\n3", "plantilla": "def registrar(pacientes, especialidades):\n    paciente = input(\"Paciente: \")\n    especialidad = input(\"Especialidad: \")\n    # TODO: agregue el paciente y la especialidad a sus listas\n\n\ndef listar(pacientes, especialidades):\n    if len(pacientes) == 0:\n        print(\"No hay citas registradas.\")\n    # TODO: recorra las listas y muestre cada cita\n\n\ndef main():\n    pacientes = []\n    especialidades = []\n    # TODO: menú con while\n    #   1 Registrar · 2 Listar · 3 Salir\n    #   cualquier otra opción: \"Opción inválida\"\n\n\nmain()\n"}, {"id": "fiebre", "n": 2, "nivel": "Base", "titulo": "El contador que nace antes", "resumen": "Conteo con ciclo y contador: el ejercicio de la casa del Taller 4 sin la parte del JSON.", "enunciado": "<p>Escriba la función <code>contar_fiebre(temperaturas)<\/code>: recibe una lista de temperaturas y <b>devuelve<\/b> cuántas son de fiebre (<b>38.0 o más<\/b>). El <code>main()<\/code> ya está hecho: pregunta cuántos pacientes hay y lee cada temperatura.<\/p>\n<p class=\"tip\">Tres reglas del contador: nace en 0 <b>antes<\/b> del ciclo, suma <b>dentro<\/b> del if y se devuelve <b>después<\/b> del ciclo.<\/p>", "entradas_ejemplo": "3\n36.5\n38.0\n39.2", "plantilla": "FIEBRE = 38.0\n\n\ndef contar_fiebre(temperaturas):\n    # TODO: recorra la lista y cuente las temperaturas de fiebre\n    return 0\n\n\ndef main():\n    n = int(input(\"¿Cuántos pacientes? \"))\n    temperaturas = []\n    for i in range(n):\n        t = float(input(\"Temperatura del paciente \" + str(i + 1) + \": \"))\n        temperaturas.append(t)\n    print(\"Pacientes con fiebre:\", contar_fiebre(temperaturas))\n\n\nmain()\n"}, {"id": "buscar", "n": 3, "nivel": "Intermedia", "titulo": "La búsqueda que se rinde temprano", "resumen": "Búsqueda secuencial que devuelve la posición o -1, sin importar mayúsculas ni espacios.", "enunciado": "<p>Escriba <code>buscar(pacientes, nombre)<\/code>: recorre la lista y <b>devuelve la posición<\/b> del paciente, o <b>-1<\/b> si no está. Debe encontrarlo aunque lo escriban con otras mayúsculas o con espacios de más.<\/p>\n<p class=\"tip\">El <code>return -1<\/code> va <b>después<\/b> del for, nunca en un <code>else<\/code> dentro del ciclo: si lo pone ahí, la búsqueda se rinde con el primer paciente que no coincide.<\/p>", "entradas_ejemplo": "  sara vega ", "plantilla": "def buscar(pacientes, nombre):\n    # TODO: recorra con for i in range(len(pacientes))\n    #       compare sin importar mayúsculas ni espacios\n    #       devuelva i si lo encuentra, o -1 si no está\n    pass\n\n\ndef main():\n    pacientes = [\"Ana Solís\", \"Luis Mora\", \"Sara Vega\"]\n    nombre = input(\"Paciente a buscar: \")\n    posicion = buscar(pacientes, nombre)\n    if posicion == -1:\n        print(\"No está registrado.\")\n    else:\n        print(\"Encontrado en la posición\", posicion, \"->\", pacientes[posicion])\n\n\nmain()\n"}, {"id": "validar", "n": 4, "nivel": "Intermedia", "titulo": "El dato que no se deja pasar", "resumen": "Validación con while: insistir hasta recibir un entero dentro del rango.", "enunciado": "<p>Escriba <code>leer_entero_en_rango(mensaje, minimo, maximo)<\/code>. Pide un dato con <code>input(mensaje)<\/code> y <b>vuelve a pedirlo<\/b>, con un mensaje de error, hasta que sea un número entero entre <code>minimo<\/code> y <code>maximo<\/code> (los dos incluidos). Devuelve el número ya convertido a <code>int<\/code>.<\/p>\n<p>El ejemplo usa el nivel de triage, del 1 al 5 (ejercicio 3 del Taller 4).<\/p>\n<p class=\"tip\">Primero revise que sea un número con <code>.isdigit()<\/code>; solo entonces conviértalo con <code>int()<\/code> y revise el rango.<\/p>", "entradas_ejemplo": "tres\n0\n7\n3", "plantilla": "def leer_entero_en_rango(mensaje, minimo, maximo):\n    # TODO: pida el dato con input(mensaje)\n    #       mientras no sea un entero entre minimo y maximo:\n    #           muestre un mensaje de error y vuelva a pedirlo\n    #       devuelva el número como int\n    pass\n\n\ndef main():\n    nivel = leer_entero_en_rango(\"Nivel de triage (1 a 5): \", 1, 5)\n    if nivel <= 2:\n        print(\"Atención inmediata\")\n    else:\n        print(\"En espera\")\n\n\nmain()\n"}, {"id": "jornadas", "n": 5, "nivel": "Intermedia", "titulo": "Dos jornadas, tres respuestas", "resumen": "Conjuntos dentro de una función: cuántas personas en ambas jornadas, en total y en una sola (ejercicio 7).", "enunciado": "<p>El área de salud hizo dos jornadas de vacunación. Escriba <code>resumen_jornadas(jornada1, jornada2)<\/code>: recibe dos <b>conjuntos<\/b> de cédulas y <b>devuelve tres números<\/b>, en este orden:<\/p>\n<ol><li>cuántas personas asistieron a <b>ambas<\/b> jornadas,<\/li><li>cuántas personas <b>distintas<\/b> se atendieron en total,<\/li><li>cuántas asistieron a <b>una sola<\/b> jornada.<\/li><\/ol>\n<p>Se devuelven separados por comas: <code>return ambas, total, solo_una<\/code><\/p>\n<p class=\"tip\">Total no es <code>len(a) + len(b)<\/code>: quien fue a las dos se contaría dos veces. Use las operaciones del Taller 3.<\/p>", "entradas_ejemplo": "", "plantilla": "def resumen_jornadas(jornada1, jornada2):\n    # TODO: ambas, total y solo_una con operaciones de conjuntos\n    ambas = 0\n    total = 0\n    solo_una = 0\n    return ambas, total, solo_una\n\n\ndef main():\n    jornada1 = {\"1-1111-1111\", \"2-2222-2222\", \"3-3333-3333\"}\n    jornada2 = {\"2-2222-2222\", \"4-4444-4444\"}\n    ambas, total, solo_una = resumen_jornadas(jornada1, jornada2)\n    print(\"En ambas jornadas:\", ambas)\n    print(\"Personas distintas:\", total)\n    print(\"En una sola jornada:\", solo_una)\n\n\nmain()\n"}, {"id": "json", "n": 6, "nivel": "Avanzada", "titulo": "El sistema que recuerda", "resumen": "Persistencia con json: cargar al iniciar (si el archivo existe) y guardar al salir.", "enunciado": "<p>Complete las dos funciones de persistencia que piden los 15 ejercicios del Taller 4:<\/p>\n<ul><li><code>guardar_json(archivo, datos)<\/code>: escribe la lista de listas en el archivo con <code>json.dump()<\/code>.<\/li>\n<li><code>cargar_json(archivo, cantidad_listas)<\/code>: si el archivo <b>existe<\/b>, lo lee con <code>json.load()<\/code> y lo devuelve; si <b>no existe<\/b>, devuelve tantas listas vacías como indique <code>cantidad_listas<\/code>.<\/li><\/ul>\n<p>Pruébelo: registre un paciente, salga con 3 y vuelva a ejecutar. El paciente sigue ahí, porque el laboratorio conserva el archivo entre ejecuciones (botón «Borrar archivos» para empezar de cero).<\/p>\n<p class=\"tip\">La primera vez el archivo no existe: por eso se pregunta con <code>os.path.exists(archivo)<\/code> antes de abrirlo para leer.<\/p>", "entradas_ejemplo": "1\nAna Solís\n38.5\n2\n3", "plantilla": "import json\nimport os\n\nARCHIVO = \"pacientes.json\"\n\n\ndef guardar_json(archivo, datos):\n    # TODO: abra el archivo con \"w\" y escriba datos con json.dump()\n    pass\n\n\ndef cargar_json(archivo, cantidad_listas):\n    # TODO: si el archivo existe, ábralo con \"r\" y devuelva json.load()\n    #       si no existe, devuelva cantidad_listas listas vacías\n    pass\n\n\ndef main():\n    nombres, temperaturas = cargar_json(ARCHIVO, 2)      # 1) cargar al iniciar\n    while True:\n        print(\"1. Registrar  2. Listar  3. Salir\")\n        opcion = input(\"Opción: \")\n        if opcion == \"1\":\n            nombres.append(input(\"Nombre: \"))\n            temperaturas.append(float(input(\"Temperatura: \")))\n        elif opcion == \"2\":\n            for i in range(len(nombres)):\n                print(nombres[i], temperaturas[i])\n        elif opcion == \"3\":\n            guardar_json(ARCHIVO, [nombres, temperaturas])  # 2) guardar al salir\n            break\n        else:\n            print(\"Opción inválida\")\n\n\nmain()\n"}, {"id": "detective", "n": 7, "nivel": "Reto", "titulo": "Detective: el inventario con cinco defectos", "resumen": "Un sistema completo de insumos con cinco defectos sembrados. Encuéntrelos y corríjalos.", "enunciado": "<p>Este sistema de inventario se parece mucho a los ejercicios 2, 8 y 11 del Taller 4, pero tiene <b>cinco defectos sembrados<\/b>. Corre, pero no cumple los requisitos. Encuéntrelos y corríjalos: cada prueba que pase es un defecto menos.<\/p>\n<ul class=\"reqs\"><li><code>R1<\/code> La cantidad y el stock mínimo se guardan como números enteros.<\/li>\n<li><code>R2<\/code> Un insumo está en alerta cuando su cantidad es <b>menor<\/b> que el stock mínimo (igual al mínimo no es alerta).<\/li>\n<li><code>R3<\/code> La opción 2 dice <b>cuántos<\/b> insumos están en alerta en total.<\/li>\n<li><code>R4<\/code> La búsqueda encuentra cualquier insumo de la lista, sin importar mayúsculas.<\/li>\n<li><code>R5<\/code> Al salir se guarda el inventario en <code>inventario.json<\/code> y al iniciar se carga.<\/li><\/ul>\n<p class=\"tip\">Primero ejecútelo con datos de prueba y compare lo que sale con los requisitos. Así se encuentran los defectos: probando, no leyendo.<\/p>", "entradas_ejemplo": "1\ngasa\n10\n10\n1\nsutura\n2\n5\n2\n3\nsutura\n4", "plantilla": "import json\nimport os\n\nARCHIVO = \"inventario.json\"\n\n\ndef cargar_json(archivo, cantidad_listas):\n    if os.path.exists(archivo):\n        with open(archivo, \"r\", encoding=\"utf-8\") as f:\n            return json.load(f)\n    vacias = []\n    for i in range(cantidad_listas):\n        vacias.append([])\n    return vacias\n\n\ndef guardar_json(archivo, datos):\n    with open(archivo, \"w\", encoding=\"utf-8\") as f:\n        json.dump(datos, f, indent=2, ensure_ascii=False)\n\n\ndef registrar(nombres, cantidades, minimos):\n    nombres.append(input(\"Insumo: \").strip())\n    cantidades.append(input(\"Cantidad: \"))\n    minimos.append(int(input(\"Stock mínimo: \")))\n\n\ndef alertas(nombres, cantidades, minimos):\n    for i in range(len(nombres)):\n        en_alerta = 0\n        if cantidades[i] <= minimos[i]:\n            print(\"ALERTA:\", nombres[i], \"tiene\", cantidades[i], \"y el mínimo es\", minimos[i])\n            en_alerta = en_alerta + 1\n    return en_alerta\n\n\ndef buscar(nombres, buscado):\n    for i in range(len(nombres)):\n        if nombres[i].lower() == buscado.strip().lower():\n            return i\n        else:\n            return -1\n    return -1\n\n\ndef main():\n    nombres, cantidades, minimos = cargar_json(ARCHIVO, 3)\n    while True:\n        print(\"1. Registrar  2. Alertas  3. Buscar  4. Salir\")\n        opcion = input(\"Opción: \")\n        if opcion == \"1\":\n            registrar(nombres, cantidades, minimos)\n        elif opcion == \"2\":\n            print(\"Insumos en alerta:\", alertas(nombres, cantidades, minimos))\n        elif opcion == \"3\":\n            pos = buscar(nombres, input(\"Insumo a buscar: \"))\n            if pos == -1:\n                print(\"No existe ese insumo.\")\n            else:\n                print(nombres[pos], \"-\", cantidades[pos], \"unidades\")\n        elif opcion == \"4\":\n            print(\"Hasta luego.\")\n            break\n        else:\n            print(\"Opción inválida\")\n\n\nmain()\n"}]</script>
+<script type="application/json" id="DATA_HARNESS">"# Motor de pruebas del Laboratorio de Algoritmos en Salud (corre en Pyodide y en CPython).\nimport sys, io, ast, os, re, json, traceback, tempfile, shutil\n\n\nclass FinEntradas(Exception):\n    pass\n\n\nclass SalidaExcesiva(Exception):\n    pass\n\n\nclass _Captura(io.StringIO):\n    def write(self, s):\n        if self.tell() > 40000:\n            raise SalidaExcesiva()\n        return super().write(s)\n\n\nARCHIVO_ALUMNO = \"su_programa.py\"\n\n# ───────────── traducción de errores ─────────────\ndef _linea(e):\n    if isinstance(e, SyntaxError) and e.filename == ARCHIVO_ALUMNO:\n        return e.lineno\n    tb = traceback.extract_tb(e.__traceback__)\n    ln = None\n    for fr in tb:\n        if fr.filename == ARCHIVO_ALUMNO:\n            ln = fr.lineno\n    return ln\n\n\ndef traducir(e):\n    t = type(e).__name__\n    m = str(e)\n    ln = _linea(e)\n    donde = (\" (línea %d)\" % ln) if ln else \"\"\n    titulo, pista = \"%s%s: %s\" % (t, donde, m), \"\"\n    if isinstance(e, SalidaExcesiva):\n        titulo = \"Su programa imprimió sin parar\"\n        pista = (\"Casi siempre es un ciclo infinito: la condición del while nunca cambia o falta un break. \"\n                 \"Revise qué hace que el ciclo termine.\")\n    elif isinstance(e, (IndentationError, TabError)):\n        titulo = \"Error de sangría%s\" % donde\n        pista = (\"En Python, los espacios al inicio de cada línea dicen qué está dentro de una función, de un if o de un ciclo. \"\n                 \"Las líneas del mismo bloque van a la misma altura, con 4 espacios por nivel.\")\n    elif isinstance(e, SyntaxError):\n        titulo = \"Error de escritura%s\" % donde\n        if \"return\" in m and \"outside function\" in m:\n            pista = \"Hay un return fuera de una función: la sangría lo sacó del def. Muévalo hacia la derecha, dentro de la función.\"\n        elif \"expected ':'\" in m:\n            pista = \"Falta el signo de dos puntos (:) al final de una línea con def, if, elif, else, for o while.\"\n        elif \"was never closed\" in m or \"unexpected EOF\" in m:\n            pista = \"Quedó un paréntesis, corchete o comilla sin cerrar.\"\n        elif \"invalid syntax\" in m and \"=\" in m:\n            pista = \"Para comparar se usa == (dos iguales). Un solo = es para guardar un valor.\"\n        else:\n            pista = \"Revise esa línea letra por letra: paréntesis, comillas y los dos puntos (:).\"\n    elif isinstance(e, NameError):\n        nombre = re.findall(r\"'([^']+)'\", m)\n        n = nombre[0] if nombre else \"ese nombre\"\n        titulo = \"Python no conoce «%s»%s\" % (n, donde)\n        pista = (\"O está escrito distinto de donde lo creó (mayúsculas y tildes cuentan), o lo creó dentro de otra función. \"\n                 \"Lo que se crea dentro de una función solo existe ahí: páselo como parámetro o devuélvalo con return.\")\n    elif isinstance(e, TypeError):\n        titulo = \"Error de tipos%s\" % donde\n        if \"concatenate str\" in m or \"can only concatenate\" in m:\n            pista = \"Está uniendo texto y número con +. Convierta el número con str() o separe con comas dentro de print().\"\n        elif \"not supported between instances of 'str' and\" in m or \"and 'str'\" in m:\n            pista = \"Está comparando un texto con un número. ¿Convirtió con int() o float() lo que leyó con input()?\"\n        elif \"not subscriptable\" in m and \"set\" in m:\n            pista = \"Un conjunto no tiene posiciones: no se puede usar conjunto[0]. Recórralo con for o use una lista.\"\n        elif \"NoneType\" in m:\n            pista = \"Una función no devolvió nada (None). Le falta el return con el resultado.\"\n        elif \"positional argument\" in m:\n            pista = \"La función recibe una cantidad de datos distinta de la que le está enviando. Compare el def con la llamada.\"\n        elif \"not iterable\" in m:\n            pista = \"Está recorriendo con for algo que no es una lista ni un conjunto (por ejemplo, un número).\"\n        else:\n            pista = \"Revise de qué tipo es cada dato en esa línea: texto (str), entero (int), decimal (float), lista o conjunto.\"\n    elif isinstance(e, json.JSONDecodeError):\n        titulo = \"El archivo no tiene un JSON válido%s\" % donde\n        pista = \"¿Lo escribió con json.dump()? ¿Lo abrió con 'w' (que reemplaza) y no con 'a' (que agrega al final)?\"\n    elif isinstance(e, ValueError):\n        titulo = \"Dato con formato incorrecto%s\" % donde\n        if \"int()\" in m:\n            pista = \"int() recibió un texto que no es un número entero. Valide antes de convertir (por ejemplo, con .isdigit()).\"\n        elif \"float\" in m:\n            pista = \"float() recibió un texto que no es un número. Recuerde que los decimales se escriben con punto: 37.5\"\n        else:\n            pista = \"Un dato no tiene el formato que la operación espera.\"\n    elif isinstance(e, AttributeError):\n        titulo = \"Método que no existe%s\" % donde\n        if \"'set'\" in m and \"append\" in m:\n            pista = \"En los conjuntos se agrega con add(), no con append().\"\n        elif \"'list'\" in m and \"'add'\" in m:\n            pista = \"En las listas se agrega con append(), no con add().\"\n        elif \"NoneType\" in m:\n            pista = \"Está usando el resultado de una función que no devolvió nada. Le falta return.\"\n        else:\n            pista = \"Ese método no existe para ese tipo de dato. Revise si es una lista, un conjunto o un texto.\"\n    elif isinstance(e, IndexError):\n        titulo = \"Posición que no existe%s\" % donde\n        pista = \"Pidió una posición fuera de la lista. Las posiciones van de 0 a len(lista) - 1.\"\n    elif isinstance(e, ZeroDivisionError):\n        titulo = \"División entre cero%s\" % donde\n        pista = \"Antes de dividir, valide que el divisor no sea 0 (por ejemplo, que la lista no esté vacía).\"\n    elif isinstance(e, FileNotFoundError):\n        titulo = \"El archivo no existe%s\" % donde\n        pista = \"La primera vez el .json todavía no existe. Antes de abrirlo para leer, pregunte con os.path.exists(archivo).\"\n    elif isinstance(e, io.UnsupportedOperation):\n        titulo = \"Modo de archivo equivocado%s\" % donde\n        pista = \"Para leer se abre con 'r' y para escribir con 'w'.\"\n    elif isinstance(e, RecursionError):\n        titulo = \"Una función se llama a sí misma sin fin%s\" % donde\n        pista = \"En este curso no se usa recursividad. Revise que ninguna función se llame a sí misma.\"\n    return {\"tipo\": t, \"linea\": ln, \"titulo\": titulo, \"detalle\": m, \"pista\": pista}\n\n\n# ───────────── ejecución con entradas simuladas ─────────────\nclass Programa:\n    \"\"\"Carga el código del estudiante en un espacio aislado y permite llamarlo con entradas simuladas.\"\"\"\n\n    def __init__(self, codigo):\n        self.codigo = codigo\n        self.ns = None\n        self.error_carga = None\n        self.salida_carga = \"\"\n\n    def _entradas(self, entradas, salida, estado):\n        cola = [str(x) for x in entradas]\n\n        def _input(msg=\"\"):\n            salida.write(str(msg))\n            if not cola:\n                estado[\"agotadas\"] = True\n                raise FinEntradas()\n            v = cola.pop(0)\n            salida.write(v + \"\\n\")\n            estado[\"usadas\"] += 1\n            estado.setdefault(\"marcas\", []).append(salida.tell())\n            return v\n        return _input, cola\n\n    def correr(self, entradas=()):\n        \"\"\"Ejecuta el programa completo de principio a fin (como si se presionara Ejecutar).\"\"\"\n        salida = _Captura(); estado = {\"agotadas\": False, \"usadas\": 0}\n        _input, cola = self._entradas(entradas, salida, estado)\n        ns = {\"__name__\": \"__main__\", \"input\": _input}\n        viejo = sys.stdout; sys.stdout = salida\n        err = None\n        try:\n            exec(compile(self.codigo, ARCHIVO_ALUMNO, \"exec\"), ns)\n        except FinEntradas:\n            pass\n        except BaseException as e:\n            if isinstance(e, (KeyboardInterrupt, SystemExit)) and not isinstance(e, SystemExit):\n                raise\n            err = None if isinstance(e, SystemExit) else traducir(e)\n        finally:\n            sys.stdout = viejo\n        self.ns = ns\n        return {\"salida\": salida.getvalue(), \"error\": err, \"agotadas\": estado[\"agotadas\"],\n                \"sobrantes\": len(cola), \"usadas\": estado[\"usadas\"], \"marcas\": estado.get(\"marcas\", [])}\n\n    def cargar(self):\n        \"\"\"Define las funciones del estudiante (el main() del final se detiene en el primer input).\"\"\"\n        r = self.correr([])\n        self.error_carga = r[\"error\"]\n        self.salida_carga = r[\"salida\"]\n        return self.ns\n\n    def llamar(self, nombre, *args, entradas=()):\n        if self.ns is None:\n            self.cargar()\n        f = self.ns.get(nombre)\n        if not callable(f):\n            return {\"existe\": False}\n        salida = _Captura(); estado = {\"agotadas\": False, \"usadas\": 0}\n        _input, cola = self._entradas(entradas, salida, estado)\n        self.ns[\"input\"] = _input\n        viejo = sys.stdout; sys.stdout = salida\n        res, err = None, None\n        try:\n            res = f(*args)\n        except FinEntradas:\n            pass\n        except BaseException as e:\n            err = traducir(e)\n        finally:\n            sys.stdout = viejo\n        return {\"existe\": True, \"resultado\": res, \"error\": err, \"salida\": salida.getvalue(),\n                \"agotadas\": estado[\"agotadas\"], \"sobrantes\": len(cola)}\n\n\n# ───────────── análisis del código (AST) ─────────────\nclass Revisor:\n    def __init__(self, codigo):\n        try:\n            self.arbol = ast.parse(codigo)\n        except SyntaxError:\n            self.arbol = None\n\n    def funcion(self, nombre):\n        if not self.arbol:\n            return None\n        for n in ast.walk(self.arbol):\n            if isinstance(n, ast.FunctionDef) and n.name == nombre:\n                return n\n        return None\n\n    def llama(self, nodo, nombre):\n        nodo = nodo or self.arbol\n        if not nodo:\n            return False\n        for n in ast.walk(nodo):\n            if isinstance(n, ast.Call):\n                f = n.func\n                if (isinstance(f, ast.Name) and f.id == nombre) or (isinstance(f, ast.Attribute) and f.attr == nombre):\n                    return True\n        return False\n\n    def tiene(self, tipo, nodo=None):\n        nodo = nodo or self.arbol\n        return bool(nodo) and any(isinstance(n, tipo) for n in ast.walk(nodo))\n\n    def input_en_while(self, nodo=None):\n        nodo = nodo or self.arbol\n        if not nodo:\n            return False\n        for w in ast.walk(nodo):\n            if isinstance(w, ast.While):\n                for c in w.body:\n                    if self.llama(c, \"input\"):\n                        return True\n        return False\n\n    def return_en_ciclo(self, fn):\n        \"\"\"¿Hay un return dentro del for que no está protegido por un if? (el clásico else: return -1)\"\"\"\n        f = self.funcion(fn)\n        if not f:\n            return False\n        for c in ast.walk(f):\n            if isinstance(c, ast.For):\n                for n in ast.walk(c):\n                    if isinstance(n, ast.If) and n.orelse:\n                        for o in n.orelse:\n                            if isinstance(o, ast.Return):\n                                return True\n                for n in c.body:\n                    if isinstance(n, ast.Return):\n                        return True\n        return False\n\n    def asigna_cero_en_ciclo(self, fn):\n        f = self.funcion(fn)\n        if not f:\n            return False\n        for c in ast.walk(f):\n            if isinstance(c, (ast.For, ast.While)):\n                for n in c.body:\n                    if isinstance(n, ast.Assign) and isinstance(n.value, ast.Constant) and n.value.value == 0:\n                        return True\n        return False\n\n\n# ───────────── registro de resultados ─────────────\nclass Resultados:\n    def __init__(self):\n        self.items = []\n\n    def prueba(self, nombre, ok, detalle=\"\", pista=\"\"):\n        self.items.append({\"nombre\": nombre, \"ok\": bool(ok), \"detalle\": detalle, \"pista\": \"\" if ok else pista})\n        return ok\n\n    def error(self, nombre, err):\n        self.items.append({\"nombre\": nombre, \"ok\": False, \"detalle\": err[\"titulo\"], \"pista\": err[\"pista\"], \"error\": err})\n        return False\n\n    def resumen(self):\n        pas = sum(1 for i in self.items if i[\"ok\"])\n        prim = next((i for i in self.items if not i[\"ok\"]), None)\n        return {\"pasadas\": pas, \"total\": len(self.items), \"items\": self.items,\n                \"ok\": pas == len(self.items) and len(self.items) > 0,\n                \"principal\": prim}\n\n\ndef _norm(s):\n    import unicodedata\n    s = unicodedata.normalize(\"NFD\", str(s).lower())\n    return \"\".join(c for c in s if unicodedata.category(c) != \"Mn\")\n\n\ndef contiene(texto, *palabras):\n    t = _norm(texto)\n    return all(_norm(p) in t for p in palabras)\n\n\ndef tras(r, k):\n    \"\"\"Lo que el programa mostró después de recibir la entrada número k (contando desde 0).\"\"\"\n    m = r.get(\"marcas\", [])\n    if k < len(m):\n        return r[\"salida\"][m[k]:]\n    return \"\"\n\n\ndef mostrar_lista(x):\n    return repr(x)\n\n\n_DIR_BASE = None\n\n\ndef carpeta_limpia():\n    \"\"\"Cada verificación trabaja en una carpeta vacía (para los .json).\"\"\"\n    global _DIR_BASE\n    d = tempfile.mkdtemp(prefix=\"lab_\")\n    os.chdir(d)\n    return d\n\n\nVERIFICADORES = {}\n\n\ndef verificar(mision, codigo):\n    viejo = os.getcwd()\n    try:\n        carpeta_limpia()\n        R = Resultados()\n        if not codigo.strip():\n            R.prueba(\"Hay código para revisar\", False, \"El editor está vacío.\", \"Escriba su solución o presione «Plantilla».\")\n            return R.resumen()\n        try:\n            compile(codigo, ARCHIVO_ALUMNO, \"exec\")\n        except SyntaxError as e:\n            R.error(\"El programa se puede leer (sin errores de escritura)\", traducir(e))\n            return R.resumen()\n        VERIFICADORES[mision](codigo, R)\n        return R.resumen()\n    finally:\n        os.chdir(viejo)\n\n\ndef ejecutar_libre(codigo, entradas):\n    viejo = os.getcwd()\n    try:\n        if not hasattr(ejecutar_libre, \"dir\"):\n            ejecutar_libre.dir = tempfile.mkdtemp(prefix=\"libre_\")\n        os.chdir(ejecutar_libre.dir)\n        try:\n            compile(codigo, ARCHIVO_ALUMNO, \"exec\")\n        except SyntaxError as e:\n            return {\"salida\": \"\", \"error\": traducir(e), \"agotadas\": False, \"sobrantes\": 0, \"archivos\": []}\n        r = Programa(codigo).correr(entradas)\n        r[\"archivos\"] = [f for f in os.listdir(\".\") if f.endswith(\".json\")]\n        return r\n    finally:\n        os.chdir(viejo)\n\n\ndef borrar_archivos_libres():\n    if hasattr(ejecutar_libre, \"dir\"):\n        for f in os.listdir(ejecutar_libre.dir):\n            try:\n                os.remove(os.path.join(ejecutar_libre.dir, f))\n            except Exception:\n                pass\n"</script>
+<script type="application/json" id="DATA_VERIF">["\ndef _v_menu(codigo, R):\n    rv = Revisor(codigo)\n    P = Programa(codigo)\n    R.prueba(\"Tiene una función main()\", rv.funcion(\"main\") is not None, \"\",\n             \"El taller pide organizar el programa en funciones con una main() que dirige el menú.\")\n    R.prueba(\"El menú usa un ciclo while\", rv.tiene(ast.While, rv.funcion(\"main\")), \"\",\n             \"Un menú que se repite necesita un while dentro de main(): while True: ... o while opcion != \\\"3\\\":\")\n    R.prueba(\"La opción se lee dentro del while\", rv.input_en_while(rv.funcion(\"main\")), \"\",\n             \"Si lee la opción antes del while, el ciclo repite siempre la misma opción. Mueva el input(\\\"Opción: \\\") dentro del while.\")\n    r = P.correr([\"3\"])\n    if r[\"error\"]:\n        R.error(\"La opción 3 termina el programa\", r[\"error\"])\n    else:\n        R.prueba(\"La opción 3 termina el programa\", not r[\"agotadas\"],\n                 \"Con la entrada «3» el programa siguió pidiendo datos.\",\n                 \"Al elegir 3 el ciclo debe terminar: use break dentro del if de la opción 3, o haga que la condición del while deje de cumplirse.\")\n    r = P.correr([\"1\", \"Ana Solís\", \"Pediatría\", \"2\", \"3\"])\n    if r[\"error\"]:\n        R.error(\"Registra una cita y la muestra\", r[\"error\"])\n    else:\n        despues = tras(r, 3)\n        R.prueba(\"Registra una cita y la muestra en el listado\", contiene(despues, \"Ana Solís\") and contiene(despues, \"Pediatría\"),\n                 \"Entradas: 1, Ana Solís, Pediatría, 2, 3. En el listado no aparecen Ana Solís y Pediatría.\",\n                 \"En registrar() agregue los datos a las listas con append(). En listar() recorra con for i in range(len(pacientes)) y muestre pacientes[i] y especialidades[i].\")\n    r = P.correr([\"1\", \"Ana\", \"Pediatría\", \"1\", \"Luis\", \"Ortopedia\", \"2\", \"3\"])\n    if r[\"error\"]:\n        R.error(\"Muestra todas las citas, no solo la primera\", r[\"error\"])\n    else:\n        despues = tras(r, 6)\n        R.prueba(\"Muestra todas las citas, no solo la primera\", contiene(despues, \"Ana\") and contiene(despues, \"Luis\") and contiene(despues, \"Ortopedia\"),\n                 \"Con dos citas registradas, el listado no muestra las dos.\",\n                 \"El print de cada cita va dentro del for. Si quedó fuera, solo se ve la última.\")\n    r = P.correr([\"9\", \"3\"])\n    if r[\"error\"]:\n        R.error(\"Avisa cuando la opción no existe\", r[\"error\"])\n    else:\n        R.prueba(\"Avisa cuando la opción no existe\", contiene(r[\"salida\"], \"invalid\") or contiene(r[\"salida\"], \"no valid\") or contiene(r[\"salida\"], \"incorrect\"),\n                 \"Con la opción 9 no apareció un mensaje de opción inválida.\",\n                 \"Agregue un else al final del if/elif del menú con print(\\\"Opción inválida\\\").\")\n    r = P.correr([\"2\", \"3\"])\n    if not r[\"error\"]:\n        R.prueba(\"Avisa cuando todavía no hay citas\", contiene(r[\"salida\"], \"no hay\"),\n                 \"Con la opción 2 y ninguna cita, no apareció «No hay citas registradas.».\",\n                 \"Deje el if len(pacientes) == 0 al inicio de listar().\")\nVERIFICADORES[\"menu\"] = _v_menu\n", "\ndef _v_fiebre(codigo, R):\n    rv = Revisor(codigo)\n    P = Programa(codigo); P.cargar()\n    if not R.prueba(\"Existe la función contar_fiebre()\", callable(P.ns.get(\"contar_fiebre\")), \"\",\n                    \"Defina def contar_fiebre(temperaturas): con ese nombre exacto.\"):\n        return\n    def caso(nombre, lista, esperado, pista):\n        r = P.llamar(\"contar_fiebre\", list(lista))\n        if r[\"error\"]:\n            return R.error(nombre, r[\"error\"])\n        return R.prueba(nombre, r[\"resultado\"] == esperado,\n                        \"contar_fiebre(%r) devolvió %r; se esperaba %r.\" % (lista, r[\"resultado\"], esperado), pista)\n    p_none = \"La función no devuelve el resultado. Termine con return contador (después del for, sin sangría del for).\"\n    r = P.llamar(\"contar_fiebre\", [39.0])\n    if not r[\"error\"] and r[\"resultado\"] is None:\n        R.prueba(\"La función devuelve un número\", False, \"contar_fiebre([39.0]) devolvió None.\", p_none)\n        return\n    pista_cero = (\"El contador vuelve a 0 en cada vuelta: la línea contador = 0 quedó dentro del for. Muévala antes del ciclo.\"\n                  if rv.asigna_cero_en_ciclo(\"contar_fiebre\") else\n                  \"Revise que el return esté después del for y no dentro: si está dentro, la función termina en la primera vuelta.\"\n                  if rv.return_en_ciclo(\"contar_fiebre\") else\n                  \"Recorra toda la lista con for y sume 1 al contador cada vez que la temperatura sea de fiebre.\")\n    caso(\"Cuenta varios casos de fiebre\", [38.5, 39.1, 40.0], 3, pista_cero)\n    caso(\"38.0 exacto cuenta como fiebre (valor límite)\", [36.5, 38.0, 39.2], 2,\n         \"38.0 es fiebre: la comparación debe ser >= (mayor o igual), no > (mayor).\")\n    caso(\"Sin fiebre devuelve 0\", [36.0, 37.9], 0, \"37.9 no es fiebre. Revise la comparación con 38.0.\")\n    caso(\"Lista vacía devuelve 0\", [], 0, \"Con la lista vacía el for no da vueltas; el contador debe valer 0.\")\n    caso(\"Cuenta aunque la fiebre esté al final\", [36.5, 36.8, 38.4], 1, pista_cero)\n    r = P.correr([\"3\", \"36.5\", \"38\", \"39\"])\n    if r[\"error\"]:\n        R.error(\"El programa completo funciona\", r[\"error\"])\n    else:\n        lineas = [l for l in r[\"salida\"].split(\"\\n\") if contiene(l, \"fiebre\")]\n        R.prueba(\"El programa completo funciona\", bool(lineas) and \"2\" in lineas[-1],\n                 \"Con 3 pacientes (36.5, 38, 39) el resultado debía ser 2.\", \"Revise que main() muestre lo que devuelve contar_fiebre().\")\nVERIFICADORES[\"fiebre\"] = _v_fiebre\n", "\ndef _v_buscar(codigo, R):\n    rv = Revisor(codigo)\n    P = Programa(codigo); P.cargar()\n    if not R.prueba(\"Existe la función buscar()\", callable(P.ns.get(\"buscar\")), \"\", \"Defina def buscar(pacientes, nombre): con ese nombre exacto.\"):\n        return\n    L = [\"Ana Solís\", \"Luis Mora\", \"Sara Vega\"]\n    def caso(nombre, args, esperado, pista):\n        r = P.llamar(\"buscar\", list(args[0]), args[1])\n        if r[\"error\"]:\n            return R.error(nombre, r[\"error\"])\n        return R.prueba(nombre, r[\"resultado\"] == esperado,\n                        \"buscar(%r, %r) devolvió %r; se esperaba %r.\" % (args[0], args[1], r[\"resultado\"], esperado), pista)\n    rendirse = (\"Hay un return dentro del for que no depende de encontrar al paciente (por ejemplo, un else: return -1). \"\n                \"La función se rinde con el primer paciente. Saque el return -1 del for y póngalo al final.\")\n    caso(\"Encuentra al primero\", (L, \"Ana Solís\"), 0, \"Compare pacientes[i] con el nombre buscado y devuelva i cuando coincidan.\")\n    caso(\"Encuentra al último (no se rinde temprano)\", (L, \"Sara Vega\"), 2,\n         rendirse if rv.return_en_ciclo(\"buscar\") else \"El for debe recorrer toda la lista: for i in range(len(pacientes)).\")\n    caso(\"Devuelve -1 si no está\", (L, \"Pedro Rojas\"), -1,\n         \"Si termina el for sin encontrarlo, la función debe devolver -1. Escriba return -1 después del for.\")\n    caso(\"No importan las mayúsculas\", (L, \"LUIS MORA\"), 1, \"Compare los dos lados en minúscula: pacientes[i].lower() == nombre.lower()\")\n    caso(\"No importan los espacios de más\", (L, \"  sara vega \"), 2, \"Limpie los espacios con .strip() antes de comparar.\")\n    caso(\"Lista vacía devuelve -1\", ([], \"Ana\"), -1, \"Con la lista vacía el for no da vueltas: el return -1 del final resuelve este caso.\")\nVERIFICADORES[\"buscar\"] = _v_buscar\n", "\ndef _v_validar(codigo, R):\n    P = Programa(codigo); P.cargar()\n    if not R.prueba(\"Existe la función leer_entero_en_rango()\", callable(P.ns.get(\"leer_entero_en_rango\")), \"\",\n                    \"Defina def leer_entero_en_rango(mensaje, minimo, maximo): con ese nombre exacto.\"):\n        return\n    def caso(nombre, entradas, esperado, pista, revisar_mensaje=False):\n        r = P.llamar(\"leer_entero_en_rango\", \"Nivel: \", 1, 5, entradas=entradas)\n        if r[\"error\"]:\n            return R.error(nombre, r[\"error\"])\n        if r[\"agotadas\"]:\n            return R.prueba(nombre, False, \"Entradas %r: la función siguió pidiendo datos después de recibir uno válido.\" % (entradas,), pista)\n        ok = r[\"resultado\"] == esperado and type(r[\"resultado\"]) is int\n        det = \"Entradas %r: devolvió %r (%s); se esperaba %r (int).\" % (entradas, r[\"resultado\"], type(r[\"resultado\"]).__name__, esperado)\n        if ok and revisar_mensaje:\n            lineas = [l for l in r[\"salida\"].split(\"\\n\") if l.strip() and not l.startswith(\"Nivel:\")]\n            ok = len(lineas) >= 1\n            det = \"Rechazó el dato pero no mostró ningún mensaje de error.\"\n        return R.prueba(nombre, ok, det, pista)\n    r = P.llamar(\"leer_entero_en_rango\", \"Nivel: \", 1, 5, entradas=[\"3\"])\n    if not r[\"error\"] and not r[\"agotadas\"] and r[\"resultado\"] is None:\n        R.prueba(\"Devuelve el número leído\", False, \"Con la entrada «3» devolvió None.\",\n                 \"Le falta el return con el número ya convertido: return numero\")\n        return\n    if not r[\"error\"] and isinstance(r[\"resultado\"], str):\n        R.prueba(\"Devuelve un int, no un texto\", False, \"Con la entrada «3» devolvió el texto '3'.\",\n                 \"input() siempre devuelve texto. Convierta con int() antes de devolverlo.\")\n        return\n    caso(\"Un dato válido se acepta a la primera\", [\"3\"], 3, \"Si el dato es válido, devuélvalo sin volver a pedirlo.\")\n    caso(\"Rechaza un texto y vuelve a pedir\", [\"tres\", \"3\"], 3,\n         \"Un texto como «tres» no se puede convertir: revise con .isdigit() antes de usar int(); si no es número, vuelva a pedirlo.\", True)\n    caso(\"Rechaza números fuera del rango\", [\"0\", \"7\", \"4\"], 4,\n         \"Además de ser número, debe estar entre minimo y maximo: numero >= minimo and numero <= maximo.\")\n    caso(\"Acepta el máximo exacto (valor límite)\", [\"5\"], 5, \"5 está dentro del rango: use <= maximo, no < maximo.\")\n    caso(\"Acepta el mínimo exacto (valor límite)\", [\"1\"], 1, \"1 está dentro del rango: use >= minimo, no > minimo.\")\n    caso(\"Rechaza negativos\", [\"-2\", \"2\"], 2, \"«-2» no es un nivel válido; .isdigit() devuelve False para él.\")\nVERIFICADORES[\"validar\"] = _v_validar\n", "\ndef _v_jornadas(codigo, R):\n    P = Programa(codigo); P.cargar()\n    if not R.prueba(\"Existe la función resumen_jornadas()\", callable(P.ns.get(\"resumen_jornadas\")), \"\",\n                    \"Defina def resumen_jornadas(jornada1, jornada2): con ese nombre exacto.\"):\n        return\n    a = {\"1-1111-1111\", \"2-2222-2222\", \"3-3333-3333\"}\n    b = {\"2-2222-2222\", \"4-4444-4444\"}\n    r = P.llamar(\"resumen_jornadas\", set(a), set(b))\n    if r[\"error\"]:\n        R.error(\"Devuelve tres números\", r[\"error\"]); return\n    res = r[\"resultado\"]\n    if not (isinstance(res, (tuple, list)) and len(res) == 3):\n        R.prueba(\"Devuelve tres números\", False, \"Devolvió %r.\" % (res,), \"Termine con return ambas, total, solo_una (los tres, separados por comas).\")\n        return\n    R.prueba(\"Devuelve tres números\", True)\n    ambas, total, solo = res\n    R.prueba(\"Ambas jornadas: intersección\", ambas == 1, \"Con los datos de ejemplo devolvió %r; se esperaba 1.\" % (ambas,),\n             \"Quienes asistieron a las dos están en la intersección: len(jornada1 & jornada2)\")\n    R.prueba(\"Total de personas distintas: unión\", total == 4,\n             \"Devolvió %r; se esperaba 4.%s\" % (total, \" Sumó los tamaños: la persona que fue a las dos se contó dos veces.\" if total == 5 else \"\"),\n             \"Las personas distintas son la unión: len(jornada1 | jornada2). Sumar len(a) + len(b) cuenta dos veces a quien fue a ambas.\")\n    R.prueba(\"Una sola jornada: diferencia simétrica\", solo == 3,\n             \"Devolvió %r; se esperaba 3.%s\" % (solo, \" Solo contó la jornada 1 (a - b).\" if solo == 2 else \"\"),\n             \"Quienes fueron a una sola jornada están en la diferencia simétrica: len(jornada1 ^ jornada2). a - b cuenta solo los de la jornada 1.\")\n    r = P.llamar(\"resumen_jornadas\", set(), {\"5-5555-5555\"})\n    if not r[\"error\"]:\n        R.prueba(\"Funciona con una jornada vacía\", tuple(r[\"resultado\"] or ()) == (0, 1, 1),\n                 \"resumen_jornadas(set(), {'5-5555-5555'}) devolvió %r; se esperaba (0, 1, 1).\" % (r[\"resultado\"],),\n                 \"Las operaciones de conjuntos funcionan también con conjuntos vacíos; revise que no haya casos especiales que cambien el resultado.\")\nVERIFICADORES[\"jornadas\"] = _v_jornadas\n", "\ndef _v_json(codigo, R):\n    rv = Revisor(codigo)\n    for f in os.listdir(\".\"):\n        os.remove(f)\n    P = Programa(codigo); P.cargar()\n    if P.error_carga and P.error_carga[\"tipo\"] in (\"FileNotFoundError\",):\n        R.error(\"El programa arranca aunque el archivo todavía no exista\", P.error_carga); return\n    ok1 = R.prueba(\"Existen guardar_json() y cargar_json()\", callable(P.ns.get(\"guardar_json\")) and callable(P.ns.get(\"cargar_json\")), \"\",\n                   \"Defina las dos funciones con esos nombres exactos.\")\n    if not ok1:\n        return\n    R.prueba(\"Usa json.dump() y json.load()\", rv.llama(None, \"dump\") and rv.llama(None, \"load\"), \"\",\n             \"Guarde con json.dump(datos, f) y cargue con json.load(f). (dumps/loads con s trabajan con textos, no con archivos.)\")\n    for f in os.listdir(\".\"):\n        os.remove(f)\n    r = P.llamar(\"cargar_json\", \"prueba.json\", 2)\n    if r[\"error\"]:\n        R.error(\"Sin archivo, devuelve listas vacías\", r[\"error\"])\n    else:\n        R.prueba(\"Sin archivo, devuelve listas vacías\", r[\"resultado\"] == [[], []],\n                 \"cargar_json('prueba.json', 2) sin archivo devolvió %r; se esperaba [[], []].\" % (r[\"resultado\"],),\n                 \"Si os.path.exists(archivo) es False, arme y devuelva una lista con cantidad_listas listas vacías.\")\n    r = P.llamar(\"cargar_json\", \"otra.json\", 3)\n    if not r[\"error\"]:\n        R.prueba(\"Respeta la cantidad de listas\", r[\"resultado\"] == [[], [], []],\n                 \"cargar_json('otra.json', 3) devolvió %r; se esperaba [[], [], []].\" % (r[\"resultado\"],),\n                 \"Use el parámetro cantidad_listas en un for: for i in range(cantidad_listas): vacias.append([])\")\n    datos = [[\"Ana Solís\", \"Luis Mora\"], [38.5, 36.9]]\n    r = P.llamar(\"guardar_json\", \"prueba.json\", [list(x) for x in datos])\n    if r[\"error\"]:\n        R.error(\"Guarda un archivo .json\", r[\"error\"]); return\n    existe = os.path.exists(\"prueba.json\")\n    if not R.prueba(\"Guarda un archivo .json\", existe, \"Después de guardar_json() no existe el archivo.\",\n                    \"Abra el archivo con open(archivo, \\\"w\\\", encoding=\\\"utf-8\\\") y escriba con json.dump(datos, f).\"):\n        return\n    try:\n        with open(\"prueba.json\", encoding=\"utf-8\") as f:\n            leido = json.load(f)\n        valido = True\n    except Exception:\n        valido, leido = False, None\n    R.prueba(\"El archivo tiene un JSON válido\", valido and leido == datos, \"El archivo quedó con: %r\" % (open(\"prueba.json\", encoding=\"utf-8\").read()[:120],),\n             \"Escriba la lista completa con json.dump(datos, f). No use print() ni str() para guardar.\")\n    r = P.llamar(\"cargar_json\", \"prueba.json\", 2)\n    if r[\"error\"]:\n        R.error(\"Carga lo que guardó (ida y vuelta)\", r[\"error\"])\n    else:\n        R.prueba(\"Carga lo que guardó (ida y vuelta)\", r[\"resultado\"] == datos,\n                 \"cargar_json devolvió %r.\" % (r[\"resultado\"],), \"Si el archivo existe, devuelva json.load(f).\")\n    P.llamar(\"guardar_json\", \"prueba.json\", [[\"Sara\"], [37.0]])\n    r = P.llamar(\"cargar_json\", \"prueba.json\", 2)\n    if r[\"error\"]:\n        R.error(\"Guardar dos veces reemplaza (modo \\\"w\\\")\", r[\"error\"])\n    else:\n        R.prueba(\"Guardar dos veces reemplaza (modo \\\"w\\\")\", r[\"resultado\"] == [[\"Sara\"], [37.0]],\n                 \"Después de guardar dos veces, cargar devolvió %r.\" % (r[\"resultado\"],),\n                 \"Abra con \\\"w\\\" (reemplaza todo). Con \\\"a\\\" se pega un JSON detrás del otro y el archivo queda inválido.\")\n    for f in os.listdir(\".\"):\n        os.remove(f)\n    r1 = P.correr([\"1\", \"Ana\", \"38.5\", \"3\"])\n    r2 = P.correr([\"2\", \"3\"])\n    if r1[\"error\"] or r2[\"error\"]:\n        R.error(\"Al volver a ejecutar, los datos siguen ahí\", r1[\"error\"] or r2[\"error\"])\n    else:\n        R.prueba(\"Al volver a ejecutar, los datos siguen ahí\", contiene(r2[\"salida\"], \"Ana\"),\n                 \"Se registró «Ana», se salió con 3 y, al ejecutar de nuevo, la opción 2 no la muestra.\",\n                 \"main() debe cargar al iniciar (antes del while) y guardar en la opción de salir (antes del break).\")\nVERIFICADORES[\"json\"] = _v_json\n", "\ndef _v_detective(codigo, R):\n    for f in os.listdir(\".\"):\n        os.remove(f)\n    P = Programa(codigo); P.cargar()\n    faltan = [n for n in (\"registrar\", \"alertas\", \"buscar\", \"main\") if not callable(P.ns.get(n))]\n    if faltan:\n        R.prueba(\"Conserva las funciones del sistema\", False, \"Faltan: \" + \", \".join(faltan),\n                 \"Corrija los defectos sin borrar ni renombrar las funciones.\")\n        return\n    n, c, m = [], [], []\n    r = P.llamar(\"registrar\", n, c, m, entradas=[\"gasa\", \"5\", \"10\"])\n    if r[\"error\"]:\n        R.error(\"R1 · La cantidad se guarda como número\", r[\"error\"])\n    else:\n        R.prueba(\"R1 · La cantidad se guarda como número\", c == [5] and isinstance(c[0], int),\n                 \"Después de registrar «5», la lista de cantidades quedó %r.\" % (c,),\n                 \"input() devuelve texto. Convierta la cantidad con int() antes de agregarla, igual que el stock mínimo.\")\n    r = P.llamar(\"alertas\", [\"gasa\", \"sutura\", \"jeringa\"], [1, 2, 30], [10, 10, 10])\n    if r[\"error\"]:\n        R.error(\"R3 · Cuenta todos los insumos en alerta\", r[\"error\"])\n    else:\n        R.prueba(\"R3 · Cuenta todos los insumos en alerta\", r[\"resultado\"] == 2,\n                 \"Con cantidades [1, 2, 30] y mínimo 10, devolvió %r; se esperaba 2.\" % (r[\"resultado\"],),\n                 \"El contador vuelve a 0 en cada vuelta: nace dentro del for. Muévalo antes del ciclo.\")\n    r = P.llamar(\"alertas\", [\"guantes\"], [10], [10])\n    if r[\"error\"]:\n        R.error(\"R2 · Igual al mínimo no es alerta\", r[\"error\"])\n    else:\n        R.prueba(\"R2 · Igual al mínimo no es alerta\", r[\"resultado\"] == 0 and \"ALERTA\" not in r[\"salida\"],\n                 \"Con cantidad 10 y mínimo 10 lo marcó en alerta.\",\n                 \"El requisito dice MENOR que el mínimo: use <, no <=.\")\n    r = P.llamar(\"buscar\", [\"gasa\", \"sutura\", \"jeringa\"], \"JERINGA\")\n    if r[\"error\"]:\n        R.error(\"R4 · Encuentra cualquier insumo de la lista\", r[\"error\"])\n    else:\n        R.prueba(\"R4 · Encuentra cualquier insumo de la lista\", r[\"resultado\"] == 2,\n                 \"buscar(['gasa', 'sutura', 'jeringa'], 'JERINGA') devolvió %r; se esperaba 2.\" % (r[\"resultado\"],),\n                 \"La búsqueda se rinde con el primer insumo que no coincide: el else: return -1 está dentro del for. Quítelo y deje solo el return -1 del final.\")\n    for f in os.listdir(\".\"):\n        os.remove(f)\n    r1 = P.correr([\"1\", \"gasa\", \"5\", \"10\", \"4\"])\n    r2 = P.correr([\"3\", \"gasa\", \"4\"])\n    if r1[\"error\"] or r2[\"error\"]:\n        R.error(\"R5 · Al salir guarda y al iniciar carga\", r1[\"error\"] or r2[\"error\"])\n    else:\n        R.prueba(\"R5 · Al salir guarda y al iniciar carga\", os.path.exists(\"inventario.json\") and contiene(r2[\"salida\"], \"gasa -\"),\n                 \"Se registró «gasa», se salió con 4 y, al ejecutar otra vez, la búsqueda no la encuentra.\" +\n                 (\"\" if os.path.exists(\"inventario.json\") else \" No se creó inventario.json.\"),\n                 \"La opción 4 sale sin guardar. Llame a guardar_json(ARCHIVO, [nombres, cantidades, minimos]) antes del break.\")\nVERIFICADORES[\"detective\"] = _v_detective\n"]</script>
+<script>
+"use strict";
+/* ====== CONFIGURACIÓN · pegue aquí la URL de la aplicación web de Google Apps Script (termina en /exec) ====== */
+const CONFIG = { ENDPOINT: "__ENDPOINT__", PYODIDE: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/", TIEMPO_MAX_MS: 8000 };
+
+const $ = s => document.querySelector(s);
+const MISIONES = JSON.parse($("#DATA_MISIONES").textContent);
+const HARNESS = JSON.parse($("#DATA_HARNESS").textContent);
+const VERIF = JSON.parse($("#DATA_VERIF").textContent);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("lab03564-" + k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("lab03564-" + k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ---------- endpoint: del archivo, del enlace (?e=) o de este navegador ---------- */
+(function(){
+  try{
+    const p = new URLSearchParams(location.search).get("e");
+    if(p){ store.set("endpoint", p); }
+  }catch(e){}
+})();
+function endpoint(){ return (CONFIG.ENDPOINT && CONFIG.ENDPOINT.indexOf("__") !== 0) ? CONFIG.ENDPOINT : store.get("endpoint", ""); }
+
+/* ---------- estado del estudiante ---------- */
+let NOMBRE = store.get("nombre", "");
+let SESION = store.get("sesion", "");
+if(!SESION){ SESION = Math.random().toString(36).slice(2, 10); store.set("sesion", SESION); }
+const progreso = store.get("progreso", {});   // {id: {ok:bool, intentos:n, mejor:n, total:n}}
+
+/* ---------- envío a la hoja de la persona tutora ---------- */
+let conectado = false;
+function enviar(evento, datos){
+  const url = endpoint();
+  if(!url || !NOMBRE) return;
+  const payload = Object.assign({ evento, nombre: NOMBRE, sesion: SESION, cliente: new Date().toISOString() }, datos || {});
+  try{
+    fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+      .then(() => { conectado = true; pintarQuien(); })
+      .catch(() => { conectado = false; pintarQuien(); });
+  }catch(e){}
+}
+function pintarQuien(){
+  $("#whoName").textContent = NOMBRE || "Sin nombre";
+  const d = $("#dot");
+  d.classList.toggle("on", !!(endpoint() && NOMBRE && conectado));
+  d.title = !endpoint() ? "Sin conexión configurada con la persona tutora" : (conectado ? "Su avance le llega a la persona tutora" : "Conectando…");
+}
+
+/* ---------- Python en un worker (para poder detener ciclos infinitos) ---------- */
+const WORKER_SRC = `
+let py = null, listo = null;
+self.onmessage = async (ev) => {
+  const m = ev.data;
+  try{
+    if(m.tipo === "init"){
+      importScripts(m.base + "pyodide.js");
+      py = await loadPyodide({ indexURL: m.base });
+      py.FS.writeFile("/home/pyodide/harness.py", m.harness);
+      py.runPython("import sys; sys.path.insert(0, '/home/pyodide'); import harness as H");
+      py.globals.set("_VSRC", py.toPy(m.verif));
+      py.runPython("for _s in _VSRC: exec(_s, H.__dict__)");
+      self.postMessage({ id: m.id, ok: true });
+      return;
+    }
+    if(m.tipo === "verificar"){
+      py.globals.set("_M", m.mision); py.globals.set("_C", m.codigo);
+      const r = py.runPython("import json; json.dumps(H.verificar(_M, _C))");
+      self.postMessage({ id: m.id, ok: true, r: JSON.parse(r) }); return;
+    }
+    if(m.tipo === "ejecutar"){
+      py.globals.set("_C", m.codigo); py.globals.set("_E", py.toPy(m.entradas));
+      const r = py.runPython("import json; json.dumps(H.ejecutar_libre(_C, list(_E)), default=str)");
+      self.postMessage({ id: m.id, ok: true, r: JSON.parse(r) }); return;
+    }
+    if(m.tipo === "borrar"){ py.runPython("H.borrar_archivos_libres()"); self.postMessage({ id: m.id, ok: true }); return; }
+  }catch(e){ self.postMessage({ id: m.id, ok: false, error: String(e && e.message || e) }); }
+};`;
+let worker = null, listo = null, pend = {}, sec = 0;
+function crearWorker(){
+  const blob = new Blob([WORKER_SRC], { type: "text/javascript" });
+  worker = new Worker(URL.createObjectURL(blob));
+  worker.onmessage = ev => { const p = pend[ev.data.id]; if(p){ delete pend[ev.data.id]; clearTimeout(p.t); p.res(ev.data); } };
+  listo = llamar({ tipo: "init", base: CONFIG.PYODIDE, harness: HARNESS, verif: VERIF }, 120000);
+  return listo;
+}
+function llamar(msg, tmax){
+  return new Promise(res => {
+    const id = ++sec; msg.id = id;
+    const t = setTimeout(() => {
+      delete pend[id];
+      try{ worker.terminate(); }catch(e){}
+      res({ ok: false, timeout: true });
+      crearWorker();            // se reinicia Python para la próxima vez
+    }, tmax || CONFIG.TIEMPO_MAX_MS);
+    pend[id] = { res, t };
+    worker.postMessage(msg);
+  });
+}
+async function python(msg){
+  estadoPy(true);
+  const r0 = await listo;
+  if(!r0.ok){ estadoPy(false); return { ok: false, error: "No se pudo cargar Python: " + (r0.error || "revise su conexión a internet y recargue la página.") }; }
+  const r = await llamar(msg);
+  estadoPy(false);
+  return r;
+}
+let cargandoPy = true;
+function estadoPy(ocupado){
+  ["#bEjecutar", "#bVerificar"].forEach(s => { const b = $(s); if(b) b.disabled = ocupado; });
+}
+
+/* ---------- vistas ---------- */
+function vista(nombre){ document.querySelectorAll("[data-view]").forEach(s => s.hidden = s.dataset.view !== nombre); window.scrollTo(0, 0); }
+function ruta(){
+  const h = (location.hash || "#inicio").slice(1);
+  if(h === "tutor"){ vista("tutor"); iniciarTutor(); return; }
+  const m = MISIONES.find(x => x.id === h);
+  if(m){ abrirMision(m); return; }
+  vista("inicio"); pintarInicio();
+}
+window.addEventListener("hashchange", ruta);
+
+function estadoMision(id){ const p = progreso[id]; if(!p) return ""; return p.ok ? "ok" : "try"; }
+function pintarChips(){
+  $("#chips").innerHTML = MISIONES.map(m => {
+    const e = estadoMision(m.id); const p = progreso[m.id];
+    const txt = "M" + m.n + (p ? (p.ok ? " ✓" : " " + p.mejor + "/" + p.total) : "");
+    return `<a class="chip ${e}" href="#${m.id}" title="${m.titulo}">${txt}</a>`;
+  }).join("");
+}
+function pintarInicio(){
+  $("#nombre").value = NOMBRE;
+  $("#cards").innerHTML = MISIONES.map(m => {
+    const p = progreso[m.id];
+    const st = p ? (p.ok ? `<span class="st ok">✓ Superada</span>` : `<span class="st try">${p.mejor} de ${p.total}</span>`) : "";
+    return `<a class="mcard" href="#${m.id}"><span class="lvl">MISIÓN ${m.n} · ${m.nivel.toUpperCase()}</span>${st}<h3>${m.titulo}</h3><p>${m.resumen}</p></a>`;
+  }).join("");
+}
+$("#guardarNombre").addEventListener("click", guardarNombre);
+$("#nombre").addEventListener("keydown", e => { if(e.key === "Enter") guardarNombre(); });
+function guardarNombre(){
+  const v = $("#nombre").value.trim().replace(/\s+/g, " ");
+  if(v.length < 3){ $("#nombreEstado").textContent = "Escriba su nombre y primer apellido."; return; }
+  NOMBRE = v; store.set("nombre", v);
+  $("#nombreEstado").textContent = endpoint() ? "Listo. Su avance le llegará a la persona tutora." : "Listo. (Este enlace no está conectado con la persona tutora: su avance queda solo en su navegador.)";
+  pintarQuien(); enviar("ingreso", {});
+}
+
+/* ---------- editor ---------- */
+const code = $("#code"), gutter = $("#gutter");
+let MISION = null, lineaError = null;
+function pintarGutter(){
+  const n = code.value.split("\n").length;
+  let s = "";
+  for(let i = 1; i <= n; i++){ s += (i === lineaError ? `<span class="err">${i}</span>` : i) + "\n"; }
+  gutter.innerHTML = s;
+  gutter.scrollTop = code.scrollTop;
+}
+code.addEventListener("input", () => { lineaError = null; pintarGutter(); if(MISION) store.set("codigo-" + MISION.id, code.value); });
+code.addEventListener("scroll", () => { gutter.scrollTop = code.scrollTop; });
+code.addEventListener("keydown", e => {
+  if(e.key === "Enter" && (e.ctrlKey || e.metaKey)){ e.preventDefault(); if(e.shiftKey) verificar(); else ejecutar(); return; }
+  const v = code.value, a = code.selectionStart, b = code.selectionEnd;
+  if(e.key === "Tab"){
+    e.preventDefault();
+    const ini = v.lastIndexOf("\n", a - 1) + 1;
+    if(a !== b && v.slice(a, b).includes("\n")){
+      const bloque = v.slice(ini, b);
+      const nuevo = e.shiftKey ? bloque.replace(/^ {1,4}/gm, "") : bloque.replace(/^/gm, "    ");
+      code.value = v.slice(0, ini) + nuevo + v.slice(b);
+      code.selectionStart = ini; code.selectionEnd = ini + nuevo.length;
+    }else if(e.shiftKey){
+      const l = v.slice(ini, a); const q = (l.match(/^ {1,4}/) || [""])[0].length;
+      if(q){ code.value = v.slice(0, ini) + v.slice(ini + q); code.selectionStart = code.selectionEnd = a - q; }
+    }else{
+      code.value = v.slice(0, a) + "    " + v.slice(b); code.selectionStart = code.selectionEnd = a + 4;
+    }
+    code.dispatchEvent(new Event("input")); return;
+  }
+  if(e.key === "Enter"){
+    const ini = v.lastIndexOf("\n", a - 1) + 1; const linea = v.slice(ini, a);
+    let ind = (linea.match(/^ */) || [""])[0];
+    if(/:\s*(#.*)?$/.test(linea)) ind += "    ";
+    e.preventDefault();
+    code.value = v.slice(0, a) + "\n" + ind + v.slice(b);
+    code.selectionStart = code.selectionEnd = a + 1 + ind.length;
+    code.dispatchEvent(new Event("input"));
+  }
+});
+
+function abrirMision(m){
+  MISION = m; vista("mision");
+  $("#mEyebrow").textContent = "Misión " + m.n + " · " + m.nivel;
+  $("#mTitulo").textContent = m.titulo;
+  $("#mEnunciado").innerHTML = m.enunciado;
+  $("#mArchivo").textContent = "mision" + m.n + "_" + m.id + ".py";
+  const i = MISIONES.indexOf(m);
+  $("#mNav").innerHTML = `<a class="btn ghost" href="#inicio">← Todas las misiones</a>` +
+    (MISIONES[i + 1] ? `<a class="btn ghost" href="#${MISIONES[i + 1].id}">Siguiente: ${MISIONES[i + 1].titulo} →</a>` : "");
+  code.value = store.get("codigo-" + m.id, m.plantilla);
+  $("#stdin").value = store.get("stdin-" + m.id, m.entradas_ejemplo);
+  $("#out").textContent = "Presione «Ejecutar» para correr su programa."; $("#outMsg").innerHTML = ""; $("#files").textContent = "";
+  lineaError = null; pintarGutter();
+  pintarPruebas(store.get("ultimo-" + m.id, null));
+  enviar("abrir", { mision: m.id });
+}
+$("#stdin").addEventListener("input", () => { if(MISION) store.set("stdin-" + MISION.id, $("#stdin").value); });
+$("#bPlantilla").addEventListener("click", () => {
+  if(!MISION) return;
+  if(code.value !== MISION.plantilla && !confirmarSuave()) return;
+  code.value = MISION.plantilla; code.dispatchEvent(new Event("input"));
+});
+let avisoPlantilla = 0;
+function confirmarSuave(){
+  // sin cuadros de diálogo del navegador: el primer clic avisa, el segundo confirma
+  const b = $("#bPlantilla");
+  if(Date.now() - avisoPlantilla < 4000){ b.textContent = "Plantilla"; return true; }
+  avisoPlantilla = Date.now(); b.textContent = "¿Seguro? Clic otra vez";
+  setTimeout(() => { b.textContent = "Plantilla"; }, 4000);
+  return false;
+}
+$("#bEjecutar").addEventListener("click", ejecutar);
+$("#bVerificar").addEventListener("click", verificar);
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c])); }
+
+async function ejecutar(){
+  if(!MISION) return;
+  const entradas = $("#stdin").value.split("\n").filter((l, i, arr) => !(i === arr.length - 1 && l === ""));
+  $("#outMsg").innerHTML = ""; $("#out").innerHTML = `<span class="loading"><span class="spin"></span>${cargandoPy ? "Preparando Python en su navegador (solo la primera vez tarda unos segundos)…" : "Ejecutando…"}</span>`;
+  const r = await python({ tipo: "ejecutar", codigo: code.value, entradas });
+  cargandoPy = false;
+  let msg = "";
+  if(r.timeout){
+    msg = `<div class="alert bad"><b>Su programa no terminó en ${CONFIG.TIEMPO_MAX_MS / 1000} segundos</b>Casi siempre es un ciclo infinito: la condición del while nunca cambia, falta un break o el contador no avanza. Python se reinició.</div>`;
+    $("#out").textContent = "";
+    enviar("ejecutar", { mision: MISION.id, ok: false, error: "Ciclo infinito (tiempo agotado)" });
+  }else if(!r.ok){
+    msg = `<div class="alert bad"><b>No se pudo ejecutar</b>${esc(r.error)}</div>`; $("#out").textContent = "";
+  }else{
+    const x = r.r;
+    $("#out").textContent = x.salida || "(el programa no mostró nada)";
+    if(x.error){
+      lineaError = x.error.linea || null; pintarGutter();
+      msg += `<div class="alert bad"><b>${esc(x.error.titulo)}</b>${esc(x.error.pista)}${x.error.detalle && x.error.pista ? `<div class="small mono">${esc(x.error.tipo)}: ${esc(x.error.detalle)}</div>` : ""}</div>`;
+    }
+    if(x.agotadas) msg += `<div class="alert warn"><b>El programa pidió más datos de los que hay en «Entradas»</b>Agregue más líneas en Entradas, o revise si su programa sigue pidiendo datos cuando ya debía terminar (por ejemplo, la opción de salir).</div>`;
+    if(!x.error && !x.agotadas && x.sobrantes > 0) msg += `<div class="alert warn"><b>Sobraron ${x.sobrantes} entrada(s)</b>El programa terminó antes de usarlas todas. ¿Terminó antes de tiempo?</div>`;
+    $("#files").textContent = (x.archivos && x.archivos.length) ? "Archivos guardados: " + x.archivos.join(", ") : "";
+    if(x.archivos && x.archivos.length) $("#files").innerHTML += ` · <a href="#" id="borrarArch">Borrar archivos</a>`;
+    enviar("ejecutar", { mision: MISION.id, ok: !x.error, error: x.error ? x.error.titulo : "" });
+  }
+  $("#outMsg").innerHTML = msg;
+  const ba = $("#borrarArch"); if(ba) ba.addEventListener("click", async e => { e.preventDefault(); await python({ tipo: "borrar" }); $("#files").textContent = "Archivos borrados."; });
+}
+
+async function verificar(){
+  if(!MISION) return;
+  $("#resumen").innerHTML = `<span class="loading"><span class="spin"></span>${cargandoPy ? "Preparando Python (solo la primera vez)…" : "Corriendo las pruebas…"}</span>`;
+  $("#tests").innerHTML = "";
+  const r = await python({ tipo: "verificar", mision: MISION.id, codigo: code.value });
+  cargandoPy = false;
+  let res;
+  if(r.timeout){
+    res = { pasadas: 0, total: 1, ok: false, items: [{ nombre: "El programa termina", ok: false, detalle: "Las pruebas no terminaron en " + CONFIG.TIEMPO_MAX_MS / 1000 + " segundos.", pista: "Hay un ciclo que nunca termina. Revise la condición de cada while y que el menú tenga una salida con break." }] };
+    res.principal = res.items[0];
+  }else if(!r.ok){
+    res = { pasadas: 0, total: 1, ok: false, items: [{ nombre: "Se pudo correr la verificación", ok: false, detalle: r.error, pista: "Recargue la página e intente de nuevo." }] };
+    res.principal = res.items[0];
+  }else res = r.r;
+  const p = progreso[MISION.id] || { ok: false, intentos: 0, mejor: 0, total: res.total };
+  p.intentos += 1; p.total = res.total; p.mejor = Math.max(p.ok ? p.total : p.mejor, res.pasadas); if(res.ok) p.ok = true;
+  progreso[MISION.id] = p; store.set("progreso", progreso);
+  store.set("ultimo-" + MISION.id, res);
+  const pr = res.principal || {};
+  if(pr.error && pr.error.linea){ lineaError = pr.error.linea; pintarGutter(); }
+  pintarPruebas(res); pintarChips();
+  enviar("verificar", { mision: MISION.id, ok: !!res.ok, pasadas: res.pasadas, total: res.total, intento: p.intentos,
+    prueba: pr.nombre || "", error: (pr.detalle || "").slice(0, 300), pista: (pr.pista || "").slice(0, 300), codigo: code.value.slice(0, 6000) });
+}
+
+function pintarPruebas(res){
+  if(!res){ $("#resumen").textContent = "Presione «Verificar» cuando crea que su programa cumple."; $("#tests").innerHTML = ""; $("#score").textContent = ""; $("#meter").style.width = "0%"; return; }
+  $("#score").textContent = res.pasadas + " de " + res.total;
+  $("#meter").style.width = (res.total ? 100 * res.pasadas / res.total : 0) + "%";
+  const pr = res.principal;
+  $("#resumen").innerHTML = res.ok
+    ? `<div class="alert ok"><b>¡Misión superada!</b>Todas las pruebas pasan. Copie el programa a Visual Studio Code y ejecútelo allí también.</div>`
+    : (pr ? `<div class="alert bad"><b>En qué está fallando: ${esc(pr.nombre)}</b>${pr.detalle ? `<div>${esc(pr.detalle)}</div>` : ""}${pr.pista ? `<div style="margin-top:6px"><b style="display:inline">Qué revisar:</b> ${esc(pr.pista)}</div>` : ""}</div>` : "");
+  $("#tests").innerHTML = res.items.map(it => `<li><span class="i ${it.ok ? "y" : "n"}">${it.ok ? "✓" : "✗"}</span><span>${esc(it.nombre)}</span></li>`).join("");
+}
+
+/* ---------- vista de la persona tutora ---------- */
+let tTimer = null, tDatos = [];
+function iniciarTutor(){
+  $("#tUrl").value = endpoint(); $("#tClave").value = store.get("clave", "");
+  if($("#tUrl").value && $("#tClave").value) cargarTablero();
+}
+$("#tCargar").addEventListener("click", () => { store.set("endpoint", $("#tUrl").value.trim()); store.set("clave", $("#tClave").value); cargarTablero(); });
+$("#tAuto").addEventListener("change", () => { if(!$("#tAuto").checked && tTimer){ clearInterval(tTimer); tTimer = null; } else cargarTablero(); });
+$("#tEnlace").addEventListener("click", async () => {
+  const u = $("#tUrl").value.trim();
+  if(!u){ $("#tEnlaceEstado").textContent = "Primero pegue la URL de la aplicación web."; return; }
+  const enlace = location.origin + location.pathname + "?e=" + encodeURIComponent(u);
+  try{ await navigator.clipboard.writeText(enlace); $("#tEnlaceEstado").textContent = "Copiado. Péguelo en el chat de Teams."; }
+  catch(e){ $("#tEnlaceEstado").textContent = enlace; }
+});
+function jsonp(url){
+  return new Promise((res, rej) => {
+    const cb = "cb_" + Math.random().toString(36).slice(2);
+    const s = document.createElement("script");
+    const t = setTimeout(() => { limpiar(); rej(new Error("tiempo")); }, 15000);
+    function limpiar(){ clearTimeout(t); delete window[cb]; s.remove(); }
+    window[cb] = d => { limpiar(); res(d); };
+    s.onerror = () => { limpiar(); rej(new Error("red")); };
+    s.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&_=" + Date.now();
+    document.body.appendChild(s);
+  });
+}
+async function cargarTablero(){
+  const u = $("#tUrl").value.trim(), k = $("#tClave").value;
+  if(!u || !k){ $("#tEstado").textContent = "Pegue la URL y la clave."; return; }
+  $("#tEstado").textContent = "Cargando…";
+  try{
+    const d = await jsonp(u + "?accion=leer&clave=" + encodeURIComponent(k));
+    if(d.error){ $("#tEstado").textContent = "La hoja respondió: " + d.error; return; }
+    tDatos = d.filas || [];
+    pintarTablero();
+    $("#tEstado").textContent = "Actualizado " + new Date().toLocaleTimeString("es-CR") + " · " + tDatos.length + " registros.";
+  }catch(e){ $("#tEstado").textContent = "No se pudo leer la hoja (" + e.message + "). Revise la URL, la clave y que la aplicación web esté implementada para «Cualquier usuario»."; }
+  if($("#tAuto").checked && !tTimer) tTimer = setInterval(cargarTablero, 20000);
+}
+function esOk(v){ return v === true || String(v).toLowerCase() === "true"; }
+function norm(s){ return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim().replace(/\s+/g, " "); }
+function hace(f){ const s = Math.round((Date.now() - new Date(f).getTime()) / 1000); if(isNaN(s)) return ""; if(s < 60) return "hace " + s + " s"; if(s < 3600) return "hace " + Math.round(s / 60) + " min"; return "hace " + Math.round(s / 3600) + " h"; }
+let tIndice = {};
+function pintarTablero(){
+  const est = {};
+  tDatos.forEach(f => {
+    const k = norm(f.nombre); if(!k) return;
+    const e = est[k] || (est[k] = { nombre: f.nombre, ult: f.fecha, ultEv: f, m: {} });
+    if(new Date(f.fecha) >= new Date(e.ult)){ e.ult = f.fecha; e.ultEv = f; }
+    if(!f.mision) return;
+    const c = e.m[f.mision] || (e.m[f.mision] = { ok: false, ver: 0, eje: 0, mejor: 0, total: 0, ultima: null });
+    if(f.evento === "verificar"){
+      c.ver++; c.total = f.total || c.total; c.mejor = Math.max(c.mejor, Number(f.pasadas) || 0);
+      if(esOk(f.ok)) c.ok = true;
+      if(!c.ultima || new Date(f.fecha) >= new Date(c.ultima.fecha)) c.ultima = f;
+    }else if(f.evento === "ejecutar") c.eje++;
+  });
+  tIndice = est;
+  const filas = Object.keys(est).sort((a, b) => est[a].nombre.localeCompare(est[b].nombre, "es"));
+  let h = "<tr><th style='text-align:left'>Estudiante</th><th>Estado</th>" + MISIONES.map(m => `<th title="${esc(m.titulo)}">M${m.n}</th>`).join("") + "<th>Dónde va y qué le falla</th></tr>";
+  filas.forEach(k => {
+    const e = est[k]; const s = (Date.now() - new Date(e.ult).getTime()) / 1000;
+    const pill = s < 180 ? "<span class='pill live'>activa</span>" : (s < 900 ? "<span class='pill idle'>" + hace(e.ult) + "</span>" : "<span class='pill off'>" + hace(e.ult) + "</span>");
+    h += `<tr><td class="n">${esc(e.nombre)}</td><td>${pill}</td>`;
+    MISIONES.forEach(m => {
+      const c = e.m[m.id];
+      if(!c) h += "<td>·</td>";
+      else if(c.ok) h += `<td class="c-ok" data-k="${esc(k)}" data-m="${m.id}">✓<div class="small">${c.ver} verif.</div></td>`;
+      else if(c.ver) h += `<td class="c-bad" data-k="${esc(k)}" data-m="${m.id}">${c.mejor}/${c.total}<div class="small">${c.ver} verif.</div></td>`;
+      else h += `<td class="c-run" data-k="${esc(k)}" data-m="${m.id}">abrió<div class="small">${c.eje} ejec.</div></td>`;
+    });
+    const u = e.ultEv; const mm = MISIONES.find(x => x.id === u.mision);
+    const det = u.evento === "verificar" && !esOk(u.ok) ? ("Falla: " + (u.prueba || "") ) : (u.evento === "ejecutar" && u.error ? "Error al ejecutar: " + u.error : (u.evento === "verificar" ? "Pasó todas las pruebas" : u.evento));
+    h += `<td class="last">${mm ? "<b>M" + mm.n + "</b> · " : ""}${esc(det)}</td></tr>`;
+  });
+  if(!filas.length) h += `<tr><td colspan="${MISIONES.length + 3}">Todavía no hay registros. Cuando las estudiantes escriban su nombre aparecerán aquí.</td></tr>`;
+  $("#tTabla").innerHTML = h;
+  $("#tTabla").querySelectorAll("td[data-k]").forEach(td => td.addEventListener("click", () => detalle(td.dataset.k, td.dataset.m)));
+  // lo que más falla
+  const cuenta = {};
+  Object.values(est).forEach(e => Object.entries(e.m).forEach(([mid, c]) => { if(c.ultima && !esOk(c.ultima.ok) && c.ultima.prueba){ const kk = "M" + (MISIONES.find(x => x.id === mid) || {}).n + " · " + c.ultima.prueba; cuenta[kk] = (cuenta[kk] || 0) + 1; } }));
+  const top = Object.entries(cuenta).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  $("#tErrores").hidden = !top.length;
+  $("#tTop").innerHTML = top.map(([t, n]) => `<li>${esc(t)} <b>(${n})</b></li>`).join("");
+}
+function detalle(k, mid){
+  const e = tIndice[k]; const c = e && e.m[mid]; const m = MISIONES.find(x => x.id === mid);
+  if(!c) return;
+  const u = c.ultima;
+  $("#dlgT").textContent = e.nombre + " · Misión " + m.n + " · " + m.titulo;
+  $("#dlgB").innerHTML = u
+    ? `<div style="padding:12px 16px"><div class="small">Último intento: ${esc(hace(u.fecha))} · ${esc(u.pasadas)} de ${esc(u.total)} pruebas · intento ${esc(u.intento)}</div>${esOk(u.ok) ? `<div class="alert ok"><b>Pasó todas las pruebas</b></div>` : `<div class="alert bad"><b>${esc(u.prueba)}</b>${esc(u.error)}<div style="margin-top:4px"><b style="display:inline">Pista que vio:</b> ${esc(u.pista)}</div></div>`}</div><pre>${esc(u.codigo || "(sin código)")}</pre>`
+    : `<div style="padding:16px">Abrió la misión y ejecutó ${c.eje} vez/veces, pero todavía no ha verificado.</div>`;
+  $("#dlg").showModal();
+}
+$("#dlgX").addEventListener("click", () => $("#dlg").close());
+
+/* ---------- arranque ---------- */
+pintarChips(); pintarQuien(); ruta();
+crearWorker();
+</script>
+</body>
+</html>
