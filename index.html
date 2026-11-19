@@ -31,6 +31,8 @@ header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
 .who{font-size:13px;display:flex;align-items:center;gap:8px}
 .who .dot{width:9px;height:9px;border-radius:50%;background:#8a95ab;display:inline-block}
 .who .dot.on{background:#4fd18b}
+.who .salir{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;cursor:pointer}
+.who .salir:hover{background:rgba(255,255,255,.12)}
 main{max-width:1320px;margin:0 auto;padding:18px 16px 60px}
 .hero{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:16px}
 .eyebrow{color:#9b6c00;font-weight:700;font-size:12px;letter-spacing:.8px;text-transform:uppercase;margin:0 0 4px}
@@ -123,7 +125,7 @@ footer{max-width:1320px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font
 <header class="top"><div class="bar">
   <div class="brand"><b>Laboratorio de Algoritmos en Salud</b><span>03564 Lógica y Algoritmos para SIS · Tutoría 4 · UNED</span></div>
   <div class="chips" id="chips"></div>
-  <div class="who"><span class="dot" id="dot" title="Conexión con la persona tutora"></span><span id="whoName">Sin nombre</span></div>
+  <div class="who"><span class="dot" id="dot" title="Conexión con la persona tutora"></span><span id="whoName">Sin nombre</span><button class="salir" id="bSalir" type="button" hidden title="Borra su nombre, su código y su avance de este navegador">Salir</button></div>
 </div></header>
 
 <main>
@@ -206,7 +208,9 @@ footer{max-width:1320px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font
       <label class="small"><input type="checkbox" id="tAuto" checked> Actualizar solo</label>
     </div>
     <p class="small" id="tEstado" style="margin:8px 0 0"></p>
-    <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="tEnlace">Copiar enlace para estudiantes</button><span class="small" id="tEnlaceEstado"></span></div>
+    <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="tEnlace">Copiar enlace para estudiantes</button><span class="small" id="tEnlaceEstado"></span>
+      <span style="margin-left:auto"></span><button class="btn ghost" type="button" id="tLimpiar" title="Oculta lo anterior a este momento. La hoja de Google no se borra.">Limpiar tablero</button></div>
+    <p class="small" id="tCorte" style="margin:6px 0 0" hidden></p>
   </div>
   <div style="overflow:auto"><table class="dash" id="tTabla"></table></div>
   <div class="panel" style="margin-top:12px" id="tErrores" hidden><h3>Lo que más está fallando</h3><ul id="tTop" style="margin:0;padding-left:20px"></ul></div>
@@ -262,6 +266,7 @@ function enviar(evento, datos){
 }
 function pintarQuien(){
   $("#whoName").textContent = NOMBRE || "Sin nombre";
+  $("#bSalir").hidden = !NOMBRE;
   const d = $("#dot");
   d.classList.toggle("on", !!(endpoint() && NOMBRE && conectado));
   d.title = !endpoint() ? "Sin conexión configurada con la persona tutora" : (conectado ? "Su avance le llega a la persona tutora" : "Conectando…");
@@ -357,6 +362,24 @@ function pintarInicio(){
     return `<a class="mcard" href="#${m.id}"><span class="lvl">MISIÓN ${m.n} · ${m.nivel.toUpperCase()}</span>${st}<h3>${m.titulo}</h3><p>${m.resumen}</p></a>`;
   }).join("");
 }
+let avisoSalir = 0;
+$("#bSalir").addEventListener("click", () => {
+  const b = $("#bSalir");
+  if(Date.now() - avisoSalir > 4000){
+    avisoSalir = Date.now(); b.textContent = "¿Salir? Clic otra vez";
+    setTimeout(() => { b.textContent = "Salir"; }, 4000); return;
+  }
+  // borra nombre, código y avance de este navegador; conserva la conexión con la hoja
+  try{
+    const quitar = [];
+    for(let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith("lab03564-") && !["lab03564-endpoint", "lab03564-clave", "lab03564-corte"].includes(k)) quitar.push(k);
+    }
+    quitar.forEach(k => localStorage.removeItem(k));
+  }catch(e){}
+  location.hash = "#inicio"; location.reload();
+});
 $("#guardarNombre").addEventListener("click", guardarNombre);
 $("#nombre").addEventListener("keydown", e => { if(e.key === "Enter") guardarNombre(); });
 $("#guardarNombre2").addEventListener("click", () => guardarNombre("2"));
@@ -566,12 +589,31 @@ async function cargarTablero(){
   try{
     const d = await jsonp(u + "?accion=leer&clave=" + encodeURIComponent(k));
     if(d.error){ $("#tEstado").textContent = "La hoja respondió: " + d.error; return; }
-    tDatos = d.filas || [];
+    const corte = store.get("corte", "");
+    tDatos = (d.filas || []).filter(f => !corte || new Date(f.fecha) >= new Date(corte));
+    pintarCorte();
     pintarTablero();
     $("#tEstado").textContent = "Actualizado " + new Date().toLocaleTimeString("es-CR") + " · " + tDatos.length + " registros.";
   }catch(e){ $("#tEstado").textContent = "No se pudo leer la hoja (" + e.message + "). Revise la URL, la clave y que la aplicación web esté implementada para «Cualquier usuario»."; }
   if($("#tAuto").checked && !tTimer) tTimer = setInterval(cargarTablero, 20000);
 }
+function pintarCorte(){
+  const c = store.get("corte", ""), el = $("#tCorte");
+  el.hidden = !c; if(!c) return;
+  const f = new Date(c);
+  el.innerHTML = "Mostrando solo lo registrado desde el " + esc(f.toLocaleDateString("es-CR")) + " a las " + esc(f.toLocaleTimeString("es-CR", { hour: "numeric", minute: "2-digit" })) + " · Lo anterior sigue guardado en la hoja. <a href='#' id='tTodo'>Mostrar todo</a>";
+  $("#tTodo").addEventListener("click", e => { e.preventDefault(); store.set("corte", ""); cargarTablero(); });
+}
+let avisoLimpiar = 0;
+$("#tLimpiar").addEventListener("click", () => {
+  const b = $("#tLimpiar");
+  if(Date.now() - avisoLimpiar > 4000){
+    avisoLimpiar = Date.now(); b.textContent = "¿Limpiar? Clic otra vez";
+    setTimeout(() => { b.textContent = "Limpiar tablero"; }, 4000); return;
+  }
+  b.textContent = "Limpiar tablero";
+  store.set("corte", new Date().toISOString()); cargarTablero();
+});
 function esOk(v){ return v === true || String(v).toLowerCase() === "true"; }
 function norm(s){ return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim().replace(/\s+/g, " "); }
 function hace(f){ const s = Math.round((Date.now() - new Date(f).getTime()) / 1000); if(isNaN(s)) return ""; if(s < 60) return "hace " + s + " s"; if(s < 3600) return "hace " + Math.round(s / 60) + " min"; return "hace " + Math.round(s / 3600) + " h"; }
